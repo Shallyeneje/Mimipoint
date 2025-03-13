@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { PhoneCallIcon } from "lucide-react";
 import { FiWifi, FiHome, FiTv, FiCreditCard } from "react-icons/fi";
 import { Card, CardContent } from "@/components/ui/card";
-import DataPurchaseForm from "./dataPurchaseForm";
-import DataTransactions from "./dataTransactions";
+
 import Link from "next/link";
+import DataCards from "./DataCards";
 const data = [
   {
     name: "MTN",
@@ -109,55 +109,7 @@ export default function DataDashboard() {
         ))}
       </div>
       <h3 className="text-[#00005D] font-bold text-xl mt-4">Top MTN Data Offers</h3>
-      <div className="flex bg-[#C2C2E0] rounded-[6px] p-1 w-max mt-4">
-      {options.map(({ label, href }) => (
-        <Link key={label} href={href} legacyBehavior>
-           <a
-          onClick={() => setClicked(label)}
-          className={`px-3 sm:px-4 py-1 text-xs sm:text-sm font-medium rounded-[6px] transition-colors ${
-            clicked === label ? "bg-[#00005D] text-white" : "text-black"
-          }`}
-        >
-            {label}
-          </a>
-        </Link>
-      ))}
-    </div>
-      <div className="flex">
-        {/* Main Content */}
-        <main className="flex-1 ">
-          {/* Service Buttons */}
-          
-          <div className="grid grid-cols-3 gap-4 mt-6">
-            {[
-              { bundle: "200MB", pay: "₦150/1day" },
-              { bundle: "500MB", pay: "₦150/1day" },
-              { bundle: "750MB", pay: "₦150/1day" },
-              { bundle: "1GB", pay: "₦150/1day" },
-              { bundle: "2GB", pay: "₦150/1day" },
-              { bundle: "3GB", pay: "₦150/1day" },
-              { bundle: "5GB", pay: "₦150/1day" },
-              { bundle: "7GB", pay: "₦150/1day" },
-              { bundle: "10GB", pay: "₦150/1day" },
-            ].map(({ bundle, pay }, index) => (
-              <Card
-                key={`${bundle}-${index}`}
-                className=" h-[100px] flex items-center p-4 rounded-[6px]"
-              >
-                <CardContent className="flex flex-col justify-center">
-                  <h3 className="font-bold text-[#00005D] text-2xl">{bundle}</h3>
-                  <p className="text-[14px] text-[#8A8AB9]">{pay}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </main>
-        {/* Sidebar: Purchase Airtime */}
-        <aside className="w-64 "><DataPurchaseForm/></aside>
-      </div>
-      <div className="mt-10">
-      <DataTransactions/>
-      </div>
+      <DataCards/>
     </div>
   );
 }
