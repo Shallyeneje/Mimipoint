@@ -5,9 +5,8 @@ import { CheckCircle, Wallet } from "lucide-react";
 import { FiWifi, FiHome, FiTv, FiCreditCard } from "react-icons/fi";
 import { Card, CardContent } from "@/components/ui/card";
 import { DialogModal } from "@/components/shared/dialogModal";
-// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import BundleTabs from "./bundleTabs";
 const packages = [
   { bundle: "GOtv Smallie", Amount: "₦1900", duration: "1 Month" },
   { bundle: "GOtv Jinja", Amount: "₦3900", duration: "1 Month" },
@@ -216,27 +215,10 @@ export default function CableDashboard() {
 
       {/* Main Content */}
       <main className="flex-1 ">
-        {/* Service Buttons */}
+       <p className="font-bold mt-3"> Offers</p>
         {/* Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
-          {packages.map(({ bundle, Amount, duration }, index) => (
-            <Card
-              key={index}
-              className="h-[100px] flex items-center p-4 rounded-[6px] cursor-pointer shadow-sm hover:shadow-lg transition"
-              onClick={() => setSelectedBundle({ bundle, Amount })}
-            >
-              <CardContent className="flex flex-col justify-center text-center">
-                <h3 className="font-bold text-[#00005D] text-xl">{bundle}</h3>
-                <div className="">
-                  <div className="text-[10px] mx-auto  w-20 bg-[#FFE5B4] text-[#D97706] px-0.5 py-0.5 rounded-full inline-block">
-                    {duration}
-                  </div>
-                </div>
-                <p className="text-[14px] text-[#8A8AB9]">{Amount}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <BundleTabs setSelectedBundle={setSelectedBundle} />
+
 
         {/* Payment Modal */}
         {selectedBundle && (
