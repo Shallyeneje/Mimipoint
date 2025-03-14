@@ -6,7 +6,11 @@ import Sidebar from "@/components/shared/sidebar";
 import "./globals.css";
 import { LogoutProvider } from "@/components/pages/logout/logoutContext";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -17,22 +21,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <title>Mimi-point</title>
       </head>
       <LogoutProvider>
-      <body className="bg-[#f9f9f9] flex flex-col min-h-screen">
-        {/* Navbar */}
-        <Navbar activeRoute="/" toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <body className="bg-[#f9f9f9] flex flex-col min-h-screen">
+          {/* Navbar */}
+          <Navbar
+            activeRoute="/"
+            toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          />
 
-        {/* Page Layout */}
-        <div className="flex flex-1">
-          {/* Sidebar */}
-          <Sidebar isOpen={isSidebarOpen} toggleSidebar={() => setIsSidebarOpen(false)} />
+          {/* Page Layout */}
+          <div className="flex flex-1">
+            {/* Sidebar */}
+            <Sidebar
+              isOpen={isSidebarOpen}
+              toggleSidebar={() => setIsSidebarOpen(false)}
+            />
 
-          {/* Main Content */}
-          <main className="flex-1 ">{children}</main>
-        </div>
-      
-        
+            {/* Main Content */}
+            <main className="flex-1 ">{children}</main>
+          </div>
         </body>
-        </LogoutProvider>
+      </LogoutProvider>
     </html>
   );
 }
