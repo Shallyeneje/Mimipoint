@@ -25,22 +25,6 @@ export default function Transactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
-  //   useEffect(() => {
-  //     async function fetchTransactions() {
-  //       try {
-  //         const res = await fetch("/api/transactions"); // Replace with your API
-  //         if (!res.ok) throw new Error("Failed to fetch transactions");
-  //         const data = await res.json();
-  //         setTransactions(data);
-  //       } catch (error) {
-  //         console.error("Error fetching transactions:", error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     }
-  //     fetchTransactions();
-  //   }, []);
-
   useEffect(() => {
     // Simulating an API response with a delay
     setTimeout(() => {
@@ -115,9 +99,9 @@ export default function Transactions() {
         <span className="">
           <ArrowLeftRight size={22} className="text-[#00005D] " />{" "}
         </span>
-        <span className="text-2xl font-bold text-[#00005D] flex items-center gap-2 ">
+        <h6 className="text-2xl font-bold text-[#00005D] flex items-center gap-2 ">
           Transactions
-        </span>
+        </h6>
       </div>
 
       {/* Transactions Table */}
@@ -140,7 +124,7 @@ export default function Transactions() {
               {transactions.map((transaction, index) => (
                 <TableRow
                   key={transaction.id}
-                  className="border-b  text-[14px] text-[#8A8AB9] "
+                  className="border-b  text-[14px] text-[#414189] "
                 >
                   <TableCell className="p-3 text-[14px] text-[#00005D] font-bold">{transaction.id}</TableCell>
                   <TableCell className="p-3 ">{transaction.type}</TableCell>

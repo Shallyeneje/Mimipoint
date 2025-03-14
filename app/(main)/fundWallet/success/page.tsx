@@ -4,7 +4,8 @@ import { FaCheckCircle, FaHome } from "react-icons/fa";
 
 const Feedback = () => {
   const searchParams = useSearchParams();
-  const amount = searchParams.get("amount") || "0"; // Get amount from query params
+  const ref = searchParams.get("reference");
+  const amount = 3000; // Corrected amount
   const router = useRouter();
 
   return (
@@ -20,10 +21,14 @@ const Feedback = () => {
       <div className="flex flex-col justify-center items-center bg-[#EFEFF5] p-4">
         <div className="bg-white shadow-md rounded-lg p-6 md:p-10 text-center max-w-md">
           <FaCheckCircle className="text-[#009900] text-5xl mx-auto mb-4" />
-          <h1 className="text-xl font-bold text-[#00005D]">Top up was Successful</h1>
+          <h1 className="text-xl font-bold text-[#00005D]">
+            Top up was Successful
+          </h1>
           <h3 className="text-lg font-semibold text-[#00005D]">₦{amount}</h3>
           <p className="mt-2">
-            Your wallet top-up was successful. <span className="font-semibold">₦{amount}</span> has been added to your account.
+            Your wallet top-up was successful.{" "}
+            <span className="font-semibold">₦{amount}</span> has been added to
+            your account.
           </p>
           <button
             onClick={() => router.push("/")}

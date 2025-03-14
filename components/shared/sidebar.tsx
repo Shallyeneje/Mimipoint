@@ -1,19 +1,39 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Home, Phone, Wifi, Tv, DollarSign, List, Shield, User, LogOut } from "lucide-react";
+import {
+  Home,
+  Phone,
+  Wifi,
+  Tv,
+  DollarSign,
+  List,
+  Shield,
+  User,
+  LogOut,
+} from "lucide-react";
 import Link from "next/link";
-import { useLogout } from "../pages/logout/logoutContext";
+// import { useLogout } from "../pages/logout/logoutContext";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+} from "@/components/ui/sidebar"; // Adjust import if necessary
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
+// import Logo from "@/public/logo.png"; // Adjust logo path
+import LogoutModal from "./logout-modal";
+import { useState } from "react";
 
-interface SidebarProps {
-  isOpen: boolean;
-  toggleSidebar: () => void;
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
-  
-  const pathname = usePathname(); // Get current path
-  const { triggerLogout } = useLogout();
+const SidebarComponent = () => {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   const menuItems = [
     { name: "Dashboard", icon: Home, path: "/" },
@@ -26,44 +46,88 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     { name: "Transactions", icon: List, path: "/transactions" },
     { name: "Complaints", icon: Shield, path: "/complaints" },
     { name: "Account Info", icon: User, path: "/account-info" },
-    // { name: "Login", icon: LogOut, path: "/Login" }
   ];
 
   return (
-    <aside
-      className={`left-0 top-[50px] w-64 bg-white p-4 transition-transform duration-300 border-r-[#8A8AB9] ${
-        isOpen ? "translate-y-0 opacity-100" : "-translate-y-5 opacity-0 pointer-events-none"
-      }`}
-    >
-      <ul className="space-y-2 text-[14px] font-bold">
-        {menuItems.map(({ name, icon: Icon, path }) => {
-          const isActive = pathname === path;
-          return (
-            <li key={name}>
-              <Link
-                href={path}
-                className={`flex items-center gap-3 p-3 rounded-lg transition ${
-                  isActive ? "bg-[#00005D] text-white" : "hover:bg-[#B3B3E6] text-[#8A8AB9]"
-                }`}
-              >
-                <Icon size={18} />
-                {name}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+    <Sidebar>
+      {/* Sidebar Header */}
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu className="p-4 pt-7">
+              <div className="flex items-center space-x-2">
+                {/* <Image src={Logo} alt="Logo" className="w-[40px]" /> */}
+                <h4 className="text-lg font-bold text-[#101928]">Mimi-point</h4>
+              </div>
+            </SidebarMenu>
+          </SidebarGroupContent>
 
-      {/* 🚀 Logout Button */}
-      <button
-        className=" flex items-center gap-3 font-bold p-3 rounded-lg hover:bg-[#B3B3E6] text-[#8A8AB9] w-full"
-        onClick={triggerLogout}
-      >
-        <LogOut size={18} />
-        Logout
-      </button>
-    </aside>
+          {/* Sidebar Menu */}
+          <SidebarGroupContent>
+            <SidebarMenu className="p-4 pt-3">
+              {menuItems.map(({ name, icon: Icon, path }) => (
+                <SidebarMenuItem key={name}>
+                  <SidebarMenuButton
+                    asChild
+                    className={`h-[42px] px-3 text-sm transition ${
+                      pathname === path
+                        ? "bg-primary text-white"
+                        : "text-[#414189] hover:bg-gray-100"
+                    }`}
+                  >
+                    <Link href={path}>
+                      <Icon size={18} className="mr-2" />
+                      {name}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+
+              <SidebarMenuItem>
+                <Separator className="h-[1.2px] bg-[#F0F2F5] my-4" />
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      {/* Sidebar Footer - User Profile & Logout */}
+      <SidebarFooter>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu className="py-4">
+              <SidebarMenuItem className="h-[48px] flex justify-between items-center">
+                <div className="flex items-center space-x-3">
+                  {/* Avatar */}
+                  <div className="w-[36px] h-[36px] rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
+                    U {/* First letter of the username */}
+                  </div>
+                  <div>
+                    <p className="text-[#101928] font-semibold text-sm">
+                      User Name
+                    </p>
+                    <p className="text-gray-500 text-xs">user@example.com</p>
+                  </div>
+                </div>
+
+                {/* Logout Button */}
+                <Button
+                  className="p-2 hover:bg-red-500 text-red-600 hover:text-white"
+                  variant="ghost"
+                  onClick={() => setOpen(true)}
+                >
+                  <LogOut size={18} />
+                </Button>
+              </SidebarMenuItem>
+
+              {/* Logout Modal */}
+              <LogoutModal open={open} handleToggle={() => setOpen(!open)} />
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarFooter>
+    </Sidebar>
   );
 };
 
-export default Sidebar;
+export default SidebarComponent;

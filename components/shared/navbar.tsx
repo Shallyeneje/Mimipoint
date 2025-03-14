@@ -1,22 +1,19 @@
 "use client";
 import { useState } from "react";
 import { Menu, Search, Bell, MessageSquare } from "lucide-react";
+import Image from "next/image";
 
 interface NavbarProps {
   activeRoute: string;
   toggleSidebar: () => void; // ✅ Ensure this is included
 }
 
-const Navbar: React.FC<NavbarProps> = ({ activeRoute, toggleSidebar }) => {
+const Navbar = ({ activeRoute, toggleSidebar }: NavbarProps) => {
   return (
-    <nav className="bg-white px-5 py-2.5 flex items-center justify-between w-full  border-b-[#8A8AB9]">
+    <nav className="fixed z-10 bg-white px-5 py-2.5 flex items-center justify-between w-full  border-b-[#8A8AB9]">
       {/* Left Section */}
       <div className="flex items-center gap-4">
-        <h1
-          className="font-bold text-[#00005D] mr-10 text-3xl "
-        >
-          Mimi-point
-        </h1>
+        <h1 className="font-bold text-[#00005D] mr-10 text-3xl ">Mimi-point</h1>
         <button
           onClick={toggleSidebar}
           className="text-blue-900 ml-14 hover:text-blue-700"
@@ -48,10 +45,12 @@ const Navbar: React.FC<NavbarProps> = ({ activeRoute, toggleSidebar }) => {
 
         {/* Profile Section */}
         <div className="flex items-center gap-2">
-          <img
-            src="/profile.jpg"
+          <Image
+            src="/images/profile image.png"
             alt="Profile"
             className="w-8 h-8 rounded-full border"
+            width={32}
+            height={32}
           />
           <div className="hidden sm:block">
             <p className="text-sm font-bold ">Ndukwe Chiagozie</p>

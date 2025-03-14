@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=League+Spartan:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://use.typekit.net/oov2wcw.css");
+
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -9,6 +12,22 @@
   --font-mono: var(--font-geist-mono);
 }
 
+body {
+  font-family: "jost", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "century-gothic", sans-serif;
+  font-weight: 700;
+  color: #00005d;
+}
+
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -16,7 +35,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: #00005d;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -52,7 +71,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
+  --primary: #00005d;
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -124,6 +143,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-[#EFEFF5] text-[#00005D];
+    @apply bg-[#EFEFF5] text-[#414189];
   }
 }
