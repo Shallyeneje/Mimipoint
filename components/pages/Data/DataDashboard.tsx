@@ -4,6 +4,7 @@ import { PhoneCallIcon } from "lucide-react";
 import { FiWifi, FiHome, FiTv, FiCreditCard } from "react-icons/fi";
 import { Card, CardContent } from "@/components/ui/card";
 
+
 import Link from "next/link";
 import DataCards from "./DataCards";
 const data = [
@@ -56,7 +57,7 @@ export default function DataDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#EFEFF5] p-8">
+    <div className="min-h-screen bg-[#EFEFF5] p-8 mt-8">
       <div className="w-64  hidden md:block">
               <h2 className="text-sm font-bold flex items-center gap-2">
                 <FiHome size={20} /> Dashboard
@@ -108,7 +109,7 @@ export default function DataDashboard() {
           </Link>
         ))}
       </div>
-      <h3 className="text-[#00005D] font-bold text-xl mt-4">Top MTN Data Offers</h3>
+      <h3 className="text-[#00005D] font-bold text-xl mt-8">Top MTN Data Offers</h3>
       <DataCards/>
     </div>
   );

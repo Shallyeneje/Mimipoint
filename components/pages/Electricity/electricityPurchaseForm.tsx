@@ -13,7 +13,7 @@ export default function ElectricityPurchaseForm() {
   onChange={(e) => setAmount(e.target.value)}
   className="w-full p-1 border bg-white border-[#8A8AB9] rounded-[6px] outline-none text-[14px] focus:ring focus:ring-blue-900"
 >
-  <option value="" disabled selected>Other data offers</option>
+  <option value="" disabled defaultValue="1">Other data offers</option>
   <option value="50">₦50</option>
   <option value="100">₦100</option>
   <option value="200">₦200</option>

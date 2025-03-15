@@ -46,7 +46,7 @@ export default function DataPurchaseForm() {
   };
 
   return (
-    <div className="mx-4 mt-2 w-full max-w-md p-4">
+    <div className="mx-4 mt-14 w-full max-w-md p-4 ">
       <form onSubmit={handlePurchase}>
         <label className="block text-[14px] font-medium text-[#00005D] mb-1">
           Amount
@@ -56,6 +56,7 @@ export default function DataPurchaseForm() {
           onChange={(e) => setAmount(e.target.value)}
           className="w-full p-1 border bg-white border-[#8A8AB9] rounded-[6px] outline-none text-[14px] focus:ring focus:ring-blue-900"
         >
+          
           <option value="" disabled selected>
             Other data offers
           </option>
