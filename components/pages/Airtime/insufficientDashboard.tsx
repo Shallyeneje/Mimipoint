@@ -4,7 +4,7 @@ import { PhoneCallIcon, } from "lucide-react";
 import { FiWifi, FiHome, FiTv, FiCreditCard } from "react-icons/fi";
 import { Card, CardContent } from "@/components/ui/card";
 import InsufficientBal from "./insufficientBal";
-import AirtimeTransactions from "./airtimeTransactions";
+import Transactions from "@/components/shared/transaction";
 
 const data = [
   {
@@ -125,7 +125,7 @@ export default function InsufficientDashboard() {
         <aside className="w-64 "><InsufficientBal /></aside>
       </div>
       <div className="mt-10">
-      <AirtimeTransactions/>
+      <Transactions/>
       </div>
     </div>
   );

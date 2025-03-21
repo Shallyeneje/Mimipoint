@@ -191,7 +191,7 @@ const ComplaintForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#EFEFF5] p-5">
+    <div className="min-h-screen bg-[#EFEFF5] p-5 mt-10">
       <div className="w-64 hidden md:block">
         <h2 className="text-sm font-bold flex items-center gap-2">
           <FaHome size={20} /> Dashboard
@@ -201,14 +201,14 @@ const ComplaintForm = () => {
       <p className="text-[16px] font-medium text-[#333385]">Welcome, Gozzy</p>
 
       <div className="flex justify-center items-center min-h-screen p-4">
-        <div className="w-full max-w-md bg-white p-10 rounded-[6px]">
-          <h1 className="text-xl font-bold text-center text-[#00005D] mb-7">
+        <div className="w-full max-w-md bg-white p-8 rounded-[6px]">
+          <h1 className="text-xl font-bold text-center text-[#00005D] mb-6">
             Complaints Form
           </h1>
           {error && <p className="text-red-500 text-center">{error}</p>}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
-              <label className="block text-sm font-medium text-[#00005D] mb-1">
+              <label className="block text-sm font-medium text-[#00005D] ">
                 Name
               </label>
               <input
@@ -217,12 +217,12 @@ const ComplaintForm = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full text-sm p-2.5 border border-[#00005D] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#00005D]"
+                className="w-full text-sm p-2 border border-[#00005D] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#00005D]"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#00005D] mb-1">
+              <label className="block text-sm font-medium text-[#00005D]">
                 Email
               </label>
               <input
@@ -231,12 +231,12 @@ const ComplaintForm = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full p-2.5 border text-sm border-[#00005D] rounded-md focus:outline-none focus:ring-2 focus:ring-[#00005D]"
+                className="w-full p-2 border text-sm border-[#00005D] rounded-md focus:outline-none focus:ring-2 focus:ring-[#00005D]"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#00005D] mb-1">
+              <label className="block text-sm font-medium text-[#00005D] ">
                 Transaction ID
               </label>
               <input
@@ -245,12 +245,12 @@ const ComplaintForm = () => {
                 value={transactionId}
                 onChange={(e) => setTransactionId(e.target.value)}
                 required
-                className="w-full p-2.5 border border-[#00005D] text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-[#00005D]"
+                className="w-full p-2 border border-[#00005D] text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-[#00005D]"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#00005D] mb-1">
+              <label className="block text-sm font-medium text-[#00005D]">
                 Complaint
               </label>
               <textarea
@@ -258,7 +258,7 @@ const ComplaintForm = () => {
                 value={complaint}
                 onChange={(e) => setComplaint(e.target.value)}
                 required
-                className="w-full p-2.5 border text-sm border-[#00005D] rounded-md h-24 resize-none focus:outline-none focus:ring-2 focus:ring-[#00005D]"
+                className="w-full p-2 border text-sm border-[#00005D] rounded-md h-24 resize-none focus:outline-none focus:ring-2 focus:ring-[#00005D]"
               ></textarea>
             </div>
 

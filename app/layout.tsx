@@ -1,5 +1,8 @@
+
+import { UserProvider } from "./context/UserContext";
 import "./globals.css";
 import type { Metadata } from "next";
+
 
 export const metadata: Metadata = {
   title: "Mimipoint",
@@ -15,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased" suppressHydrationWarning>
+      <UserProvider>
         {children}
+        </UserProvider>
       </body>
     </html>
   );

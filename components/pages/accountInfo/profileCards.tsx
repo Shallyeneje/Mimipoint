@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { FiCalendar } from "react-icons/fi";
-import { FaShoppingCart, FaCalendar } from "react-icons/fa";
+import { FaShoppingCart, FaCalendar, FaHome } from "react-icons/fa";
 import { PencilIcon } from "lucide-react";
 
 interface ProfileCardProps {
@@ -40,6 +40,14 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   
 
   return (
+    <div className="min-h-screen bg-[#EFEFF5] p-5 mx-3 mt-10">
+          <div className="w-64 hidden md:block">
+            <h2 className="text-sm font-bold flex items-center gap-2">
+              <FaHome size={20} /> Dashboard
+            </h2>
+          </div>
+          <h1 className="text-3xl font-bold text-[#00005D] mt-3">Account Info</h1>
+          <p className="text-[16px] font-medium text-[#333385]">Welcome, Gozzy</p>
     <div className="min-h-screen bg-[#EFEFF5] p-8 flex justify-center items-center">
       <div className="max-w-sm w-full bg-white rounded-xl overflow-hidden border border-gray-200 p-6">
         {/* Header */}
@@ -89,6 +97,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

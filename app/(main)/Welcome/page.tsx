@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/app/context/UserContext";
 import {
   FaInstagram,
   FaFacebook,
@@ -10,18 +11,14 @@ import {
 } from "react-icons/fa";
 
 export default function Welcome() {
+  const { user, logout } = useUser();
   const router = useRouter();
-  const [username, setUsername] = useState("");
 
   useEffect(() => {
-    // Retrieve username from localStorage
-    const storedName = localStorage.getItem("username");
-    if (storedName) {
-      setUsername(storedName);
-    } else {
-      router.push("/register"); // Redirect if no username found
+    if (!user?.username) {
+      router.push("/register");
     }
-  }, []);
+  }, [user, router]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#B0B0B0] p-4">
@@ -37,23 +34,14 @@ export default function Welcome() {
           <p className="font-medium mt-4 text-lg">
             Hello{" "}
             <span className=" font-bold uppercase">
-              {username || "Guest"}
+              {user?.username || "Guest"}
             </span>
             ,
           </p>
 
           <p className="mt-3 font-medium">
-            Welcome to <span className="font-bold">MIMI-POINT</span>, We’re excited to have you on board! 🎉<br/>
-            At MIMI-POINT, we make transactions easier, easy subscriptions, easy
-            Airtime Purchase, easy TV Subscription. <br /> Feeling stuck at any
-            point? <br /> Kindly reach out to us via: Instagram, Facebook,
-            Tiktok, LinkedIn, X (Twitter) <br />
-            @InnovationsCybercafe <br />
-            And we will be happy to help!
+            Welcome to <span className="font-bold">MIMI-POINT</span>, We’re excited to have you on board! 🎉
           </p>
-
-          <p className="font-semibold mt-4">Lawson Sorhue</p>
-          <p className="font-medium">Founder, Innovations Cybercafe.</p>
 
           <button
             onClick={() => router.push("/")}
@@ -61,11 +49,17 @@ export default function Welcome() {
           >
             Back to Dashboard
           </button>
+
+          <button
+            onClick={logout}
+            className="mt-4 bg-red-500 text-white py-2 px-6 rounded-lg font-semibold hover:bg-red-700 transition"
+          >
+            Logout
+          </button>
         </div>
 
         <div className="bg-[#EFEFF5] mt-6 p-3">
-          <p className="text-sm ">Contact us through any of our Social Media Handles</p>
-
+          <p className="text-sm">Contact us through any of our Social Media Handles</p>
           <div className="flex justify-center gap-4 mt-3 text-xl">
             <FaInstagram />
             <FaFacebook />

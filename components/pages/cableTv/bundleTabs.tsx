@@ -46,7 +46,7 @@ const DataTab = ({
       >
         <CardContent className="flex flex-col justify-center text-center">
           <h3 className="font-bold text-[#00005D] text-xl">{bundle}</h3>
-          <div className="text-[10px] mx-auto w-20 bg-[#FFE5B4] text-[#D97706] px-0.5 py-0.5 rounded-full inline-block">
+          <div className="text-[10px] mx-auto w-14 bg-[#FFE5B4] text-[#D97706] px-0.5 py-0.5 rounded-full inline-block">
             {duration}
           </div>
           <p className="text-[14px] text-[#8A8AB9]">{Amount}</p>

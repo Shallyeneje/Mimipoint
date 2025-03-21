@@ -66,6 +66,8 @@ const DataCards = () => {
   const [error, setError] = useState<string | null>(null); // Fixed missing state
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [amountError, setAmountError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const handleCardClick = (bundle: string, price: string) => {
     setSelectedBundle(bundle);
@@ -77,6 +79,32 @@ const DataCards = () => {
   const handlePurchase = () => {
     setIsPurchaseModalOpen(false);
     setIsCompleteModalOpen(true);
+  };
+  const validateInputs = () => {
+    let isValid = true;
+
+    // Validate Amount
+    if (!amount) {
+      setAmountError("Amount is required.");
+      isValid = false;
+    } else if (isNaN(Number(amount)) || Number(amount) <= 0) {
+      setAmountError("Enter a valid amount.");
+      isValid = false;
+    }
+
+    // Validate Phone Number
+    if (!phoneNumber) {
+      setPhoneError("Phone number is required.");
+      isValid = false;
+    } else if (!/^\d{10,11}$/.test(phoneNumber)) {
+      setPhoneError("Enter a valid 10 or 11-digit phone number.");
+      isValid = false;
+    }
+
+    // Proceed only if both fields are valid
+    if (isValid) {
+      handlePurchase();
+    }
   };
 
   return (
@@ -109,14 +137,12 @@ const DataCards = () => {
 
       {/* Payment Modal */}
       <DialogModal
-        open={isPurchaseModalOpen} // Fixed missing variable
+        open={isPurchaseModalOpen}
         setOpen={setIsPurchaseModalOpen}
         title="Complete Payment"
         showFooter={false}
       >
         <div className="flex flex-col">
-          {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-
           {/* Amount Input */}
           <label className="block text-[14px] font-medium text-[#00005D] mb-1">
             Amount
@@ -125,11 +151,17 @@ const DataCards = () => {
             type="text"
             placeholder="Enter Amount"
             className={`w-full p-2 border bg-white border-[#8A8AB9] rounded-[6px] outline-none text-[14px] focus:ring focus:ring-blue-900 ${
-              error ? "border-red-500" : ""
+              amountError ? "border-red-500" : ""
             }`}
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              setAmount(e.target.value);
+              if (amountError) setAmountError(null); // Clear error when user types
+            }}
           />
+          {amountError && (
+            <p className="text-red-600 text-sm mt-1">{amountError}</p>
+          )}
 
           {/* Phone Number Input */}
           <label className="block text-sm font-medium text-[#00005D] mt-3 mb-1">
@@ -139,16 +171,20 @@ const DataCards = () => {
             type="number"
             placeholder="Enter Phone Number"
             className={`w-full p-2 border bg-white border-[#8A8AB9] rounded-[6px] outline-none text-[14px] focus:ring focus:ring-[#00005D] ${
-              error ? "border-red-500" : ""
+              phoneError ? "border-red-500" : ""
             }`}
             value={phoneNumber}
             onChange={(e) => {
               setPhoneNumber(e.target.value);
-              setError(null);
+              if (phoneError) setPhoneError(null); // Clear error when user types
             }}
           />
+          {phoneError && (
+            <p className="text-red-600 text-sm mt-1">{phoneError}</p>
+          )}
         </div>
 
+        {/* Buttons */}
         <div className="flex justify-end gap-4 mt-4">
           <Button
             className="bg-gray-500"
@@ -156,7 +192,11 @@ const DataCards = () => {
           >
             Cancel
           </Button>
-          <Button className="bg-[#00005D] text-white" onClick={handlePurchase}>
+          <Button
+            className="bg-[#00005D] text-white"
+            onClick={validateInputs}
+            disabled={!amount || !phoneNumber} // Disable until valid
+          >
             Purchase Data
           </Button>
         </div>

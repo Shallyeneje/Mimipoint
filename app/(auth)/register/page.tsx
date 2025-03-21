@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/app/context/UserContext"
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -10,7 +11,8 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const router = useRouter(); // Use Next.js router for navigation
+  const { login } = useUser(); // Get login from context
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,18 +37,21 @@ export default function Register() {
       if (!res.ok) {
         throw new Error("Registration failed! Please try again.");
       }
-  
-      // Store the username in localStorage
-      localStorage.setItem("username", username);
-  
-      // Redirect to Welcome page
+
+      const data = await res.json(); // Assuming API returns data like { username, token }
+      
+      
+      // Save user data to context and localStorage
+      login({ username, email, token: data.token });
+
       router.push("/Welcome");
     } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };  
+  };
+
 
   return (
     <div className="flex min-h-screen bg-white">

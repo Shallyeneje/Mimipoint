@@ -4,6 +4,7 @@ import { ChevronDown, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import ElectricityPurchaseForm from "./electricityPurchaseForm";
+import { FaHome } from "react-icons/fa";
 
 export default function ElectricityDashboard() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -30,10 +31,7 @@ export default function ElectricityDashboard() {
       fetchBeneficiaries(); // Fetch data only when opening dropdown
     }
   };
-  const data = [
-    { name: "MTN", href: "#" },
-    { name: "Airtel", href: "/airtel" },
-  ];
+ 
   const paymentOptions = [
     { name: "Prepaid", href: "#" },
     { name: "Postpaid", href: "#" },
@@ -47,7 +45,12 @@ export default function ElectricityDashboard() {
   const [selectedProvider, setSelectedProvider] = useState(electricityProviders[0]);
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-[#EFEFF5] p-8">
+    <div className="min-h-screen bg-[#EFEFF5] p-8 mt-3">
+      <div className="w-64  mt-10 hidden md:block">
+              <h2 className="text-sm font-bold flex items-center gap-2">
+                <FaHome size={20} /> Dashboard
+              </h2>
+            </div>
       <h1 className="text-4xl font-bold text-[#00005D] mt-3">
         Electricity Bills
       </h1>
@@ -102,7 +105,7 @@ export default function ElectricityDashboard() {
             onClick={() => setSelected(name)}
           >
             {name}
-            {selected === name && <CheckCircle size={8} p-2 className="ml-2 text-[#FFFFFF] bg-[#009900]" />}
+            {selected === name && <CheckCircle size={8}  className="ml-2 text-[#FFFFFF] bg-[#009900]" />}
           </div>
         </Link>
       ))}
