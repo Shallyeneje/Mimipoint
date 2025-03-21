@@ -7,19 +7,20 @@ export default function AirtimePurchaseForm() {
   const [amount, setAmount] = useState("");
   const [phone, setPhone] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [amountError, setAmountError] = useState(""); // Error state for amount
-  const [phoneError, setPhoneError] = useState(""); // Error state for phone number
+  const [amountError, setAmountError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [insufficientFunds, setInsufficientFunds] = useState(false);
   const router = useRouter();
 
-  const balance = 5000; // Mock balance (Replace with API call if needed)
+  const balance = 5000; // Mock balance
   const product = "Airtel"; // Example product
   const cashback = amount ? Math.floor(parseFloat(amount) * 0.1) : 0; // 10% Cashback
 
   const validateInputs = () => {
     let isValid = true;
+    const amountValue = parseFloat(amount);
 
     // Validate amount
-    const amountValue = parseFloat(amount);
     if (!amount || amountValue <= 0) {
       setAmountError("Please enter a valid amount.");
       isValid = false;
@@ -28,7 +29,7 @@ export default function AirtimePurchaseForm() {
     }
 
     // Validate phone number
-    const phonePattern = /^[0-9]{11}$/; // Ensures exactly 11 digits
+    const phonePattern = /^[0-9]{11}$/;
     if (!phone || !phonePattern.test(phone)) {
       setPhoneError("Please enter a valid 11-digit phone number.");
       isValid = false;
@@ -41,62 +42,75 @@ export default function AirtimePurchaseForm() {
 
   const handlePurchase = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateInputs()) return;
 
-    if (parseFloat(amount) > balance) {
-      router.push("/buyAirtime/insufficient-funds");
+    const amountValue = parseFloat(amount);
+
+    // Check if the amount exceeds the balance
+    if (amountValue > balance) {
+      setInsufficientFunds(true);
       return;
     }
 
-    setIsModalOpen(true); // Show modal on success
+    setIsModalOpen(true); // Show success modal
+    setInsufficientFunds(false);
+  };
+
+  const handleTopUp = () => {
+    router.push("/fundWallet"); // Navigate to topup page
   };
 
   return (
     <div className="mx-4 mt-2 w-full max-w-md p-4">
       <form onSubmit={handlePurchase}>
         {/* Amount Input */}
-        <label className="block text-[14px] font-medium text-[#00005D] mb-1">
-          Amount
-        </label>
-
-        {/* Amount Error Message */}
+        <label className="block text-[14px] font-medium text-[#00005D] mb-1">Amount</label>
         {amountError && <p className="text-red-600 text-sm mb-1">{amountError}</p>}
-
         <input
           type="number"
           placeholder="50-50000"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className={`w-full p-2 border ${
-            amountError ? "border-red-500" : "border-[#8A8AB9]"
-          } bg-white rounded-[6px] outline-none text-[14px] focus:ring focus:ring-blue-900`}
+          className={`w-full p-2 border ${amountError ? "border-red-500" : "border-[#8A8AB9]"} 
+          bg-white rounded-[6px] outline-none text-[14px] focus:ring focus:ring-blue-900`}
         />
 
         {/* Phone Number Input */}
-        <label className="block text-sm font-medium text-[#00005D] mt-3 mb-1">
-          Phone number
-        </label>
-
-        {/* Phone Error Message */}
+        <label className="block text-sm font-medium text-[#00005D] mt-3 mb-1">Phone number</label>
         {phoneError && <p className="text-red-600 text-sm mb-1">{phoneError}</p>}
-
         <input
           type="tel"
           placeholder="08080982606"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className={`w-full p-2 border ${
-            phoneError ? "border-red-500" : "border-[#8A8AB9]"
-          } bg-white rounded-[6px] outline-none text-[14px] focus:ring focus:ring-blue-900`}
+          className={`w-full p-2 border ${phoneError ? "border-red-500" : "border-[#8A8AB9]"} 
+          bg-white rounded-[6px] outline-none text-[14px] focus:ring focus:ring-blue-900`}
         />
 
-        <button
-          type="submit"
-          className="w-full text-sm mt-4 bg-[#00005D] text-white font-medium py-2 rounded-[6px] hover:bg-blue-900"
-        >
-          Purchase Airtime
-        </button>
+        {/* Insufficient Funds Error */}
+        {insufficientFunds && (
+          <p className="text-red-600 text-sm mt-2 mb-1">
+            Insufficient funds. Please top up your wallet.
+          </p>
+        )}
+
+        {/* Conditional Buttons */}
+        {!insufficientFunds ? (
+          <button
+            type="submit"
+            className="w-full text-sm mt-4 bg-[#00005D] text-white font-medium py-2 rounded-[6px] hover:bg-blue-900"
+          >
+            Purchase Airtime
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="w-full text-sm mt-4 bg-[#00005D] text-white font-medium py-2 rounded-[6px] hover:bg-blue-800"
+            onClick={handleTopUp}
+          >
+            Top Up Now
+          </button>
+        )}
       </form>
 
       {/* Payment Details Modal */}
@@ -104,9 +118,7 @@ export default function AirtimePurchaseForm() {
         open={isModalOpen}
         setOpen={setIsModalOpen}
         title={
-          <p className="text-lg font-semibold text-center text-[#00005D] m-0 p-0">
-            Airtime Purchase
-          </p>
+          <p className="text-lg font-semibold text-center text-[#00005D] m-0 p-0">Airtime Purchase</p>
         }
         showFooter={false}
       >
@@ -128,7 +140,7 @@ export default function AirtimePurchaseForm() {
           <span className="ml-auto font-semibold text-[#00005D]">₦{balance}</span>
         </div>
 
-        {/* Buttons */}
+        {/* Modal Buttons */}
         <div className="mt-3 space-y-2">
           <button className="w-full bg-[#00005D] text-white py-2 rounded-md hover:bg-blue-900 transition">
             Complete Payment
