@@ -109,7 +109,7 @@ const DataCards = () => {
 
   return (
     <div>
-      <div className="flex">
+      <div className="md:flex">
         <main className="flex-1">
           <Tabs defaultValue="Daily">
             <TabsList className="grid grid-cols-3 bg-[#C2C2E0] rounded-[6px] p-1 w-max mt-4">

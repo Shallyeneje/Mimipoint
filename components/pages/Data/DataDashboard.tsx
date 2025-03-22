@@ -60,7 +60,7 @@ export default function DataDashboard() {
         Data Airtime at an affordable rate
       </p>
 
-      <div className="grid grid-cols-4 gap-4 mt-6">
+      <div className="grid md:grid-cols-4 gap-4 mt-6">
         {data.map(({ name, description, icon: Icon, color, nameColor, bg, href }) => (
           <Link key={name} href={href} legacyBehavior>
             <label className="cursor-pointer">

@@ -110,7 +110,7 @@ export default function AirtimeDashboard() {
       </div>
 
       <h3 className="text-[#00005D] font-bold text-xl mt-8">Top up now</h3>
-      <div className="flex">
+      <div className="md:flex">
         <main className="flex-1">
           {/* Airtime Selection Grid */}
           <div className="grid grid-cols-3 gap-4 mt-6">
@@ -124,9 +124,10 @@ export default function AirtimeDashboard() {
                 }}
               >
                 <CardContent className="flex flex-col justify-center">
-                  <h3 className="font-bold text-[#00005D] text-3xl">
+                  <h3 className="font-bold text-[#00005D] text-[30px] md:text-[24px] sm:text-[18px]">
                     ₦{price}
                   </h3>
+
                   <p className="text-[14px] text-[#8A8AB9]">Pay ₦{price}</p>
                 </CardContent>
               </Card>

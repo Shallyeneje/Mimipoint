@@ -106,7 +106,7 @@ export default function CableDashboard() {
         pay for your Favourite TV provider and enjoy your favourite shows
       </p>
 
-      <div className="grid grid-cols-3 gap-4 mt-6">
+      <div className="grid md:grid-cols-3 gap-4 mt-6">
         {data.map(
           ({ name, description, icon: Icon, color, nameColor, bg, href }) => (
             <Link key={name} href={href} legacyBehavior>
