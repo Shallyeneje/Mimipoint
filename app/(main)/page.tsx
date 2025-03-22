@@ -1,6 +1,6 @@
 import React from "react";
 import Dashboard from "@/components/pages/home/dashboard";
-import Transactions from "@/components/pages/home/transaction";
+import Transactions from "@/components/shared/transactions";
 
 const page = () => {
   return (

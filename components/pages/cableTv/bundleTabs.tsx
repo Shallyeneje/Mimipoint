@@ -37,21 +37,40 @@ const DataTab = ({
   data: { bundle: string; Amount: string; duration: string }[];
   setSelectedBundle: (bundle: { bundle: string; Amount: string }) => void;
 }) => (
-  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
+  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-2 mt-6">
     {data.map(({ bundle, Amount, duration }, index) => (
       <Card
-        key={index}
-        className="h-[100px] flex items-center p-4 rounded-[6px] cursor-pointer shadow-sm hover:shadow-lg transition"
-        onClick={() => setSelectedBundle({ bundle, Amount })}
-      >
-        <CardContent className="flex flex-col justify-center text-center">
-          <h3 className="font-bold text-[#00005D] text-xl">{bundle}</h3>
-          <div className="text-[10px] mx-auto w-20 bg-[#FFE5B4] text-[#D97706] px-0.5 py-0.5 rounded-full inline-block">
-            {duration}
-          </div>
-          <p className="text-[14px] text-[#8A8AB9]">{Amount}</p>
-        </CardContent>
-      </Card>
+      key={index}
+      className="h-[100px] sm:h-[80px] flex items-center p-4 sm:p-2 rounded-[6px] cursor-pointer shadow-sm hover:shadow-lg transition"
+      onClick={() => setSelectedBundle({ bundle, Amount })}
+    >
+      <CardContent className="flex flex-col justify-center text-center w-full">
+        {/* Responsive Title */}
+        <h3 className="font-bold text-[#00005D] text-xl sm:text-lg">{bundle}</h3>
+        
+        {/* Responsive Badge */}
+        <div className="text-[10px] sm:text-[8px] mx-auto w-14 sm:w-12 bg-[#FFE5B4] text-[#D97706] px-0.5 py-0.5 rounded-full inline-block">
+          {duration}
+        </div>
+        
+        {/* Responsive Amount */}
+        <p className="text-[14px] sm:text-[12px] text-[#8A8AB9]">{Amount}</p>
+      </CardContent>
+    </Card>
+    
+      // <Card
+      //   key={index}
+      //   className="md:h-[100px] flex items-center p-4 rounded-[6px] cursor-pointer "
+      //   onClick={() => setSelectedBundle({ bundle, Amount })}
+      // >
+      //   <CardContent className="flex flex-col justify-center text-center">
+      //     <h3 className="font-bold text-[#00005D] text-xl">{bundle}</h3>
+      //     <div className="text-[10px] mx-auto w-14 bg-[#FFE5B4] text-[#D97706] px-0.5 py-0.5 rounded-full inline-block">
+      //       {duration}
+      //     </div>
+      //     <p className="text-[14px] text-[#8A8AB9]">{Amount}</p>
+      //   </CardContent>
+      // </Card>
     ))}
   </div>
 );

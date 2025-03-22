@@ -1,4 +1,4 @@
-import Transaction from '@/components/shared/transaction'
+import Transactions from '@/components/shared/transactions'
 import React from 'react'
 import { FaHome } from 'react-icons/fa'
 
@@ -17,7 +17,7 @@ const page = () => {
            pay for your Favourite TV provider and enjoy your favourite shows
          </p>
 
-         <Transaction/>
+         <Transactions/>
     </div>
   )
 }

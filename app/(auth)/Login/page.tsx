@@ -1,14 +1,24 @@
 "use client";
 import { useState } from "react";
-import { FaGoogle } from "react-icons/fa";
-
+import { useUser } from "@/app/context/UserContext";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useUser(); // Access context for login
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ email, password });
+    if (email === "user@example.com" && password === "password123") {
+      // Simulating API response with a token
+      const userData = { email, token: "fake-jwt-token" };
+
+      // Save user data using context
+      login(userData);
+
+      alert("Login successful!");
+    } else {
+      alert("Invalid credentials!");
+    }
   };
 
   return (
@@ -94,7 +104,10 @@ export default function LoginPage() {
         {/* Register Link */}
         <p className="mt-4 text-sm text-left font-semibold ">
           Don’t have an account?{" "}
-          <a href="/register" className="text-[#E88B2E] font-medium hover:underline">
+          <a
+            href="/register"
+            className="text-[#E88B2E] font-medium hover:underline"
+          >
             Register
           </a>
         </p>

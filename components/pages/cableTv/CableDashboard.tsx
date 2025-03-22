@@ -7,14 +7,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DialogModal } from "@/components/shared/dialogModal";
 import Link from "next/link";
 import BundleTabs from "./bundleTabs";
-const packages = [
-  { bundle: "GOtv Smallie", Amount: "₦1900", duration: "1 Month" },
-  { bundle: "GOtv Jinja", Amount: "₦3900", duration: "1 Month" },
-  { bundle: "GOtv Jolli", Amount: "₦5800", duration: "1 Month" },
-  { bundle: "GOtv Max", Amount: "₦8500", duration: "1 Month" },
-  { bundle: "GOtv Supa", Amount: "₦11400", duration: "1 Month" },
-  { bundle: "GOtv Supa+", Amount: "₦16800", duration: "1 Month" },
-];
 const data = [
   {
     name: "GOTV",
@@ -55,6 +47,7 @@ export default function CableDashboard() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [selectedBundle, setSelectedBundle] = useState<{
     bundle: string;
@@ -63,12 +56,6 @@ export default function CableDashboard() {
   const [selectedServiceDetails, setSelectedServiceDetails] = useState(() =>
     data.find((item) => item.name === "GOTV")
   );
-
-  const options = [
-    { label: "daily", href: "/daily" },
-    { label: "monthly", href: "/monthly" },
-    { label: "yearly", href: "/2-weeks" },
-  ];
 
   // Mock API Call - Replace with your actual API call
   const fetchBeneficiaries = async () => {
@@ -90,11 +77,12 @@ export default function CableDashboard() {
   };
   const handlePayment = async () => {
     if (!smartcard || !selectedBundle) {
-      alert("Please enter your SmartCard number and select a bundle.");
+      setErrorMessage("Please enter your SmartCard number and select a bundle.");
       return;
     }
 
-    setIsPaying(true); // Show loading state
+    setIsPaying(true);
+    setErrorMessage("");
 
     // Simulate an API call with a delay
     setTimeout(() => {
@@ -118,7 +106,7 @@ export default function CableDashboard() {
         pay for your Favourite TV provider and enjoy your favourite shows
       </p>
 
-      <div className="grid grid-cols-3 gap-4 mt-6">
+      <div className="grid md:grid-cols-3 gap-4 mt-6">
         {data.map(
           ({ name, description, icon: Icon, color, nameColor, bg, href }) => (
             <Link key={name} href={href} legacyBehavior>
@@ -161,8 +149,14 @@ export default function CableDashboard() {
           )
         )}
       </div>
+      {/* Error Message */}
+      {errorMessage && (
+        <div className=" text-red-700 px-4 py-2 ">
+          {errorMessage}
+        </div>
+      )}
       <div className="flex flex-col w-full max-w-md">
-        <label className="text-sm font-medium text-[#00005D] mt-6 mb-3">
+        <label className="text-sm font-medium text-[#00005D] mt-5 mb-3">
           SmartCard number
         </label>
         <div className="flex items-center gap-2 relative">
@@ -215,10 +209,9 @@ export default function CableDashboard() {
 
       {/* Main Content */}
       <main className="flex-1 ">
-       <p className="font-bold mt-3"> Offers</p>
+        <p className="font-bold mt-3"> Offers</p>
         {/* Cards */}
         <BundleTabs setSelectedBundle={setSelectedBundle} />
-
 
         {/* Payment Modal */}
         {selectedBundle && (

@@ -1,43 +1,57 @@
 import React, { useState } from "react";
 import DataPurchaseForm from "./dataPurchaseForm";
-import DataTransactions from "./dataTransactions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DialogModal } from "@/components/shared/dialogModal";
+import { Button } from "@/components/ui/button";
 
 const tabData = {
   Daily: [
-    { bundle: "200MB", pay: "₦150/1day" },
-    { bundle: "500MB", pay: "₦200/1day" },
-    { bundle: "1GB", pay: "₦300/1day" },
-    { bundle: "200MB", pay: "₦150/1day" },
-    { bundle: "500MB", pay: "₦200/1day" },
-    { bundle: "1GB", pay: "₦300/1day" },
-    { bundle: "200MB", pay: "₦150/1day" },
-    { bundle: "500MB", pay: "₦200/1day" },
-    { bundle: "1GB", pay: "₦300/1day" },
+    { bundle: "200MB", price: "₦150", duration: "1 day" },
+    { bundle: "500MB", price: "₦200", duration: "1 day" },
+    { bundle: "1GB", price: "₦300", duration: "1 day" },
+    { bundle: "200MB", price: "₦150", duration: "1 day" },
+    { bundle: "500MB", price: "₦200", duration: "1 day" },
+    { bundle: "1GB", price: "₦300", duration: "1 day" },
+    { bundle: "200MB", price: "₦150", duration: "1 day" },
+    { bundle: "500MB", price: "₦200", duration: "1 day" },
+    { bundle: "1GB", price: "₦300", duration: "1 day" },
   ],
   "2 weeks": [
-    { bundle: "2GB", pay: "₦1,500/14days" },
-    { bundle: "5GB", pay: "₦3,000/14days" },
-    { bundle: "10GB", pay: "₦5,000/14days" },
+    { bundle: "2GB", price: "₦1,500", duration: "2 weeks" },
+    { bundle: "5GB", price: "₦3,000", duration: "2 weeks" },
+    { bundle: "10GB", price: "₦5,000", duration: "2 weeks" },
   ],
   Monthly: [
-    { bundle: "10GB", pay: "₦5,000/30days" },
-    { bundle: "20GB", pay: "₦9,000/30days" },
-    { bundle: "50GB", pay: "₦20,000/30days" },
+    { bundle: "10GB", price: "₦5,000", duration: "1 month" },
+    { bundle: "20GB", price: "₦9,000", duration: "1 month" },
+    { bundle: "50GB", price: "₦20000", duration: "1 month" },
   ],
 };
-// Reusable component for tab content
-const DataTab = ({ data }: { data: { bundle: string; pay: string }[] }) => (
+
+interface DataItem {
+  bundle: string;
+  price: string;
+  duration: string;
+}
+
+interface DataTabProps {
+  data: DataItem[];
+  onCardClick: (bundle: string, price: string) => void;
+}
+
+const DataTab: React.FC<DataTabProps> = ({ data, onCardClick }) => (
   <div className="grid grid-cols-3 gap-4 mt-6">
-    {data.map(({ bundle, pay }, index) => (
+    {data.map(({ bundle, price, duration }, index) => (
       <Card
         key={`${bundle}-${index}`}
-        className="h-[100px] flex items-center p-4 rounded-[6px]"
+        className="h-[100px] flex items-center p-3 rounded-[6px] cursor-pointer hover:bg-gray-100 transition"
+        onClick={() => onCardClick(bundle, price)}
       >
         <CardContent className="flex flex-col justify-center">
-          <h3 className="font-bold text-[#00005D] text-2xl">{bundle}</h3>
-          <p className="text-[14px] text-[#8A8AB9]">{pay}</p>
+          <h3 className="font-bold text-[#00005D] text-[22px]">{bundle}</h3>
+          <p className="text-[12px] text-[#8A8AB9]">{duration}</p>
+          <p className="text-[14px] text-[#8A8AB9]">{price}</p>
         </CardContent>
       </Card>
     ))}
@@ -45,42 +59,169 @@ const DataTab = ({ data }: { data: { bundle: string; pay: string }[] }) => (
 );
 
 const DataCards = () => {
-  const [clicked, setClicked] = useState("daily");
+  const [selectedBundle, setSelectedBundle] = useState("");
+  const [selectedPrice, setSelectedPrice] = useState("");
+  const [amount, setAmount] = useState(""); // Fixed missing state
+  const [phoneNumber, setPhoneNumber] = useState(""); // Fixed missing state
+  const [error, setError] = useState<string | null>(null); // Fixed missing state
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [amountError, setAmountError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+
+  const handleCardClick = (bundle: string, price: string) => {
+    setSelectedBundle(bundle);
+    setSelectedPrice(price);
+    setAmount(price.replace("₦", "")); // Auto-fill amount field
+    setIsPurchaseModalOpen(true);
+  };
+
+  const handlePurchase = () => {
+    setIsPurchaseModalOpen(false);
+    setIsCompleteModalOpen(true);
+  };
+  const validateInputs = () => {
+    let isValid = true;
+
+    // Validate Amount
+    if (!amount) {
+      setAmountError("Amount is required.");
+      isValid = false;
+    } else if (isNaN(Number(amount)) || Number(amount) <= 0) {
+      setAmountError("Enter a valid amount.");
+      isValid = false;
+    }
+
+    // Validate Phone Number
+    if (!phoneNumber) {
+      setPhoneError("Phone number is required.");
+      isValid = false;
+    } else if (!/^\d{10,11}$/.test(phoneNumber)) {
+      setPhoneError("Enter a valid 10 or 11-digit phone number.");
+      isValid = false;
+    }
+
+    // Proceed only if both fields are valid
+    if (isValid) {
+      handlePurchase();
+    }
+  };
+
   return (
     <div>
-      
-      <div className="flex">
-        {/* Main Content */}
-        <main className="flex-1 ">
-          {/* Service Buttons */}
-          <Tabs defaultValue="Daily" className="">
+      <div className="md:flex">
+        <main className="flex-1">
+          <Tabs defaultValue="Daily">
             <TabsList className="grid grid-cols-3 bg-[#C2C2E0] rounded-[6px] p-1 w-max mt-4">
               {Object.keys(tabData).map((key) => (
                 <TabsTrigger
                   key={key}
                   value={key}
-                  className="px-3 sm:px-4 py-1 text-xs sm:text-sm font-medium rounded-[6px] transition-colors data-[state=active]:bg-[#00005D] data-[state=active]:text-white text-black"
+                  className="px-3 py-1 text-sm font-medium rounded-[6px] transition-colors data-[state=active]:bg-[#00005D] data-[state=active]:text-white text-black"
                 >
                   {key}
                 </TabsTrigger>
               ))}
             </TabsList>
-
             {Object.entries(tabData).map(([key, data]) => (
               <TabsContent key={key} value={key}>
-                <DataTab data={data} />
+                <DataTab data={data} onCardClick={handleCardClick} />
               </TabsContent>
             ))}
           </Tabs>
         </main>
-        {/* Sidebar: Purchase Airtime */}
-        <aside className="w-64 ">
+        <aside className="w-64">
           <DataPurchaseForm />
         </aside>
       </div>
-      <div className="mt-10">
-        <DataTransactions />
-      </div>
+
+      {/* Payment Modal */}
+      <DialogModal
+        open={isPurchaseModalOpen}
+        setOpen={setIsPurchaseModalOpen}
+        title="Complete Payment"
+        showFooter={false}
+      >
+        <div className="flex flex-col">
+          {/* Amount Input */}
+          <label className="block text-[14px] font-medium text-[#00005D] mb-1">
+            Amount
+          </label>
+          <input
+            type="text"
+            placeholder="Enter Amount"
+            className={`w-full p-2 border bg-white border-[#8A8AB9] rounded-[6px] outline-none text-[14px] focus:ring focus:ring-blue-900 ${
+              amountError ? "border-red-500" : ""
+            }`}
+            value={amount}
+            onChange={(e) => {
+              setAmount(e.target.value);
+              if (amountError) setAmountError(null); // Clear error when user types
+            }}
+          />
+          {amountError && (
+            <p className="text-red-600 text-sm mt-1">{amountError}</p>
+          )}
+
+          {/* Phone Number Input */}
+          <label className="block text-sm font-medium text-[#00005D] mt-3 mb-1">
+            Phone number
+          </label>
+          <input
+            type="number"
+            placeholder="Enter Phone Number"
+            className={`w-full p-2 border bg-white border-[#8A8AB9] rounded-[6px] outline-none text-[14px] focus:ring focus:ring-[#00005D] ${
+              phoneError ? "border-red-500" : ""
+            }`}
+            value={phoneNumber}
+            onChange={(e) => {
+              setPhoneNumber(e.target.value);
+              if (phoneError) setPhoneError(null); // Clear error when user types
+            }}
+          />
+          {phoneError && (
+            <p className="text-red-600 text-sm mt-1">{phoneError}</p>
+          )}
+        </div>
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-4 mt-4">
+          <Button
+            className="bg-gray-500"
+            onClick={() => setIsPurchaseModalOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            className="bg-[#00005D] text-white"
+            onClick={validateInputs}
+            disabled={!amount || !phoneNumber} // Disable until valid
+          >
+            Purchase Data
+          </Button>
+        </div>
+      </DialogModal>
+
+      {/* Complete Purchase Modal */}
+      <DialogModal
+        open={isCompleteModalOpen}
+        setOpen={setIsCompleteModalOpen}
+        title="Data Purchase"
+        showFooter={false}
+      >
+        <h2 className="text-xl font-bold text-center">{selectedBundle}</h2>
+        <p>Product: MTN</p>
+        <p>Amount: {selectedPrice}</p>
+        <div className="flex flex-col mt-4">
+          <Button className="bg-[#00005D] text-white">Complete Purchase</Button>
+          <Button
+            className="bg-red-600 mt-2"
+            onClick={() => setIsCompleteModalOpen(false)}
+          >
+            Cancel Purchase
+          </Button>
+        </div>
+      </DialogModal>
     </div>
   );
 };

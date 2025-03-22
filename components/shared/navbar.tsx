@@ -13,7 +13,7 @@ const Navbar = ({ activeRoute, toggleSidebar }: NavbarProps) => {
     <nav className="fixed z-10 bg-white px-5 py-2.5 flex items-center justify-between w-full  border-b-[#8A8AB9]">
       {/* Left Section */}
       <div className="flex items-center gap-4">
-        <h1 className="font-bold text-[#00005D] mr-10 text-3xl ">Mimi-point</h1>
+        <h1 className="font-bold text-[#00005D] mr-10 text-3xl  ">Mimi-point</h1>
         <button
           onClick={toggleSidebar}
           className="text-blue-900 ml-14 hover:text-blue-700"

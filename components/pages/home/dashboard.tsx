@@ -96,7 +96,7 @@ export default function Dashboard() {
 
   return (
     <div className="">
-      <div className="w-64 p-6 hidden md:block">
+      <div className="w-64 p-6 mt-10 hidden md:block">
         <h2 className="text-sm font-bold flex items-center gap-2">
           <FiHome size={20} /> Dashboard
         </h2>
@@ -118,7 +118,6 @@ export default function Dashboard() {
 
       {/* Two Column Layout */}
       <div className="md:flex">
-
         {/* Sidebar: Main Section */}
         <div className="flex-1 p-6">
           {/* Stats Section */}
