@@ -92,7 +92,7 @@ export default function Transactions() {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="p-6 pt-0">
       {/* Title */}
 
       <div className="flex  gap-3 text-[#00005D] mb-2.5 ">

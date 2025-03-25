@@ -1,89 +1,65 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataPurchaseForm from "./dataPurchaseForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DialogModal } from "@/components/shared/dialogModal";
 import { Button } from "@/components/ui/button";
-
-const tabData = {
-  Daily: [
-    { bundle: "200MB", price: "₦150", duration: "1 day" },
-    { bundle: "500MB", price: "₦200", duration: "1 day" },
-    { bundle: "1GB", price: "₦300", duration: "1 day" },
-    { bundle: "200MB", price: "₦150", duration: "1 day" },
-    { bundle: "500MB", price: "₦200", duration: "1 day" },
-    { bundle: "1GB", price: "₦300", duration: "1 day" },
-    { bundle: "200MB", price: "₦150", duration: "1 day" },
-    { bundle: "500MB", price: "₦200", duration: "1 day" },
-    { bundle: "1GB", price: "₦300", duration: "1 day" },
-  ],
-  "2 weeks": [
-    { bundle: "2GB", price: "₦1,500", duration: "2 weeks" },
-    { bundle: "5GB", price: "₦3,000", duration: "2 weeks" },
-    { bundle: "10GB", price: "₦5,000", duration: "2 weeks" },
-  ],
-  Monthly: [
-    { bundle: "10GB", price: "₦5,000", duration: "1 month" },
-    { bundle: "20GB", price: "₦9,000", duration: "1 month" },
-    { bundle: "50GB", price: "₦20000", duration: "1 month" },
-  ],
-};
-
-interface DataItem {
-  bundle: string;
-  price: string;
-  duration: string;
-}
+import { DataPlan, NetworkDataPlans } from "@/api/static-data";
 
 interface DataTabProps {
-  data: DataItem[];
-  onCardClick: (bundle: string, price: string) => void;
+  data: {
+    [planName: string]: DataPlan;
+  };
+  onCardClick: (data: string, price: number) => void;
 }
 
 const DataTab: React.FC<DataTabProps> = ({ data, onCardClick }) => (
   <div className="grid grid-cols-3 gap-4 mt-6">
-    {data.map(({ bundle, price, duration }, index) => (
+    {Object.values(data).map(({ data, price, duration }, index) => (
       <Card
-        key={`${bundle}-${index}`}
+        key={`${data}-${index}`}
         className="h-[100px] flex items-center p-3 rounded-[6px] cursor-pointer hover:bg-gray-100 transition"
-        onClick={() => onCardClick(bundle, price)}
+        onClick={() => onCardClick(data, price)}
       >
         <CardContent className="flex flex-col justify-center">
-          <h3 className="font-bold text-[#00005D] text-[22px]">{bundle}</h3>
+          <h3 className="font-bold text-[#00005D] text-[22px]">{data}</h3>
           <p className="text-[12px] text-[#8A8AB9]">{duration}</p>
-          <p className="text-[14px] text-[#8A8AB9]">{price}</p>
+          <p className="text-[14px] text-[#8A8AB9]">₦{price}</p>
         </CardContent>
       </Card>
     ))}
   </div>
 );
 
-const DataCards = () => {
+const DataCards = ({ datatoshow }: { datatoshow: NetworkDataPlans | null }) => {
   const [selectedBundle, setSelectedBundle] = useState("");
-  const [selectedPrice, setSelectedPrice] = useState("");
-  const [amount, setAmount] = useState(""); // Fixed missing state
-  const [phoneNumber, setPhoneNumber] = useState(""); // Fixed missing state
-  const [error, setError] = useState<string | null>(null); // Fixed missing state
+  const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
+  const [amount, setAmount] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [amountError, setAmountError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("");
 
-  const handleCardClick = (bundle: string, price: string) => {
+  // Update the tab when the data to sc
+  useEffect(() => {
+    if (datatoshow && Object.keys(datatoshow).length > 0) {
+      setActiveTab(Object.keys(datatoshow)[0]);
+    }
+  }, [datatoshow]);
+
+  const handleCardClick = (bundle: string, price: number) => {
     setSelectedBundle(bundle);
     setSelectedPrice(price);
-    setAmount(price.replace("₦", "")); // Auto-fill amount field
+    setAmount(price.toString());
     setIsPurchaseModalOpen(true);
   };
 
-  const handlePurchase = () => {
-    setIsPurchaseModalOpen(false);
-    setIsCompleteModalOpen(true);
-  };
   const validateInputs = () => {
     let isValid = true;
 
-    // Validate Amount
     if (!amount) {
       setAmountError("Amount is required.");
       isValid = false;
@@ -92,7 +68,6 @@ const DataCards = () => {
       isValid = false;
     }
 
-    // Validate Phone Number
     if (!phoneNumber) {
       setPhoneError("Phone number is required.");
       isValid = false;
@@ -101,9 +76,9 @@ const DataCards = () => {
       isValid = false;
     }
 
-    // Proceed only if both fields are valid
     if (isValid) {
-      handlePurchase();
+      setIsPurchaseModalOpen(false);
+      setIsCompleteModalOpen(true);
     }
   };
 
@@ -111,31 +86,32 @@ const DataCards = () => {
     <div>
       <div className="md:flex">
         <main className="flex-1">
-          <Tabs defaultValue="Daily">
-            <TabsList className="grid grid-cols-3 bg-[#C2C2E0] rounded-[6px] p-1 w-max mt-4">
-              {Object.keys(tabData).map((key) => (
-                <TabsTrigger
-                  key={key}
-                  value={key}
-                  className="px-3 py-1 text-sm font-medium rounded-[6px] transition-colors data-[state=active]:bg-[#00005D] data-[state=active]:text-white text-black"
-                >
-                  {key}
-                </TabsTrigger>
+          {datatoshow && (
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="bg-white rounded mt-4 px-1 py-1">
+                {Object.keys(datatoshow).map((key) => (
+                  <TabsTrigger
+                    key={key}
+                    value={key}
+                    className="px-5 py-1 rounded-sm text-sm font-medium transition-colors data-[state=active]:bg-[#00005D] data-[state=active]:text-white text-black"
+                  >
+                    {key}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              {Object.entries(datatoshow).map(([key, data]) => (
+                <TabsContent key={key} value={key}>
+                  <DataTab data={data} onCardClick={handleCardClick} />
+                </TabsContent>
               ))}
-            </TabsList>
-            {Object.entries(tabData).map(([key, data]) => (
-              <TabsContent key={key} value={key}>
-                <DataTab data={data} onCardClick={handleCardClick} />
-              </TabsContent>
-            ))}
-          </Tabs>
+            </Tabs>
+          )}
         </main>
         <aside className="w-64">
           <DataPurchaseForm />
         </aside>
       </div>
 
-      {/* Payment Modal */}
       <DialogModal
         open={isPurchaseModalOpen}
         setOpen={setIsPurchaseModalOpen}
@@ -143,7 +119,6 @@ const DataCards = () => {
         showFooter={false}
       >
         <div className="flex flex-col">
-          {/* Amount Input */}
           <label className="block text-[14px] font-medium text-[#00005D] mb-1">
             Amount
           </label>
@@ -156,14 +131,12 @@ const DataCards = () => {
             value={amount}
             onChange={(e) => {
               setAmount(e.target.value);
-              if (amountError) setAmountError(null); // Clear error when user types
+              if (amountError) setAmountError(null);
             }}
           />
           {amountError && (
             <p className="text-red-600 text-sm mt-1">{amountError}</p>
           )}
-
-          {/* Phone Number Input */}
           <label className="block text-sm font-medium text-[#00005D] mt-3 mb-1">
             Phone number
           </label>
@@ -176,15 +149,13 @@ const DataCards = () => {
             value={phoneNumber}
             onChange={(e) => {
               setPhoneNumber(e.target.value);
-              if (phoneError) setPhoneError(null); // Clear error when user types
+              if (phoneError) setPhoneError(null);
             }}
           />
           {phoneError && (
             <p className="text-red-600 text-sm mt-1">{phoneError}</p>
           )}
         </div>
-
-        {/* Buttons */}
         <div className="flex justify-end gap-4 mt-4">
           <Button
             className="bg-gray-500"
@@ -195,30 +166,9 @@ const DataCards = () => {
           <Button
             className="bg-[#00005D] text-white"
             onClick={validateInputs}
-            disabled={!amount || !phoneNumber} // Disable until valid
+            disabled={!amount || !phoneNumber}
           >
             Purchase Data
-          </Button>
-        </div>
-      </DialogModal>
-
-      {/* Complete Purchase Modal */}
-      <DialogModal
-        open={isCompleteModalOpen}
-        setOpen={setIsCompleteModalOpen}
-        title="Data Purchase"
-        showFooter={false}
-      >
-        <h2 className="text-xl font-bold text-center">{selectedBundle}</h2>
-        <p>Product: MTN</p>
-        <p>Amount: {selectedPrice}</p>
-        <div className="flex flex-col mt-4">
-          <Button className="bg-[#00005D] text-white">Complete Purchase</Button>
-          <Button
-            className="bg-red-600 mt-2"
-            onClick={() => setIsCompleteModalOpen(false)}
-          >
-            Cancel Purchase
           </Button>
         </div>
       </DialogModal>

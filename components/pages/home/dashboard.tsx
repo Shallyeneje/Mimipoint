@@ -18,6 +18,8 @@ import {
 } from "react-icons/fi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import PageHeader from "@/components/shared/pageheader";
+import { FaHome } from "react-icons/fa";
 const services = [
   {
     name: "Buy Airtime",
@@ -95,31 +97,26 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="">
-      <div className="w-64 p-6 mt-10 hidden md:block">
-        <h2 className="text-sm font-bold flex items-center gap-2">
-          <FiHome size={20} /> Dashboard
-        </h2>
-      </div>
-
-      <div className="  m-6">
-        <h1 className="text-4xl font-bold text-[#00005D]">Dashboard</h1>
-        <div className="flex justify-between">
-          <div>
-            <p className="text-[16px] mt-2">Welcome, Gozzy</p>
-          </div>
-          <Link href={"/fundWallet"}>
-            <Button className="w-[210px] bg-[#00005D] text-[14px] text-white">
-              Fund Wallet
-            </Button>
-          </Link>
-        </div>
+    <div className="min-h-screen bg-[#EFEFF5] p-8 mt-4">
+      <div className="flex justify-between items-center">
+        <PageHeader
+          icon={<FaHome size={20} />}
+          title="Dashboard"
+          subtitle="Dashboard"
+          description="Welcome, Gozzy"
+        />
+        <Button
+          className="w-[210px] bg-[#00005D] text-[14px] text-white mt-10"
+          asChild
+        >
+          <Link href={"/fundWallet"}>Fund Wallet</Link>
+        </Button>
       </div>
 
       {/* Two Column Layout */}
-      <div className="md:flex">
+      <div className="md:flex gap-3">
         {/* Sidebar: Main Section */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 pt-6">
           {/* Stats Section */}
           {loading ? (
             <p>Loading...</p>
@@ -133,9 +130,9 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="gap-0">
-                  <p className="text-[40px] font-bold text-[#00005D]">
-                    ₦{data?.balance}
-                  </p>
+                  <h6 className="text-[40px] font-bold text-[#00005D]">
+                    {data?.balance}
+                  </h6>
                   <p className="text-sm text-[#8A8AB9]">Amount in Wallet</p>
                 </CardContent>
               </Card>
@@ -150,9 +147,9 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-[40px] font-bold text-[#00005D]">
+                  <h6 className="text-[40px] font-bold text-[#00005D]">
                     {data?.transactions}
-                  </p>
+                  </h6>
                   <p className="text-sm text-[#8A8AB9]">
                     Completed transactions
                   </p>
@@ -169,9 +166,9 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-[40px] font-bold text-[#00005D]">
+                  <h6 className="text-[40px] font-bold text-[#00005D]">
                     {data?.complaints}
-                  </p>
+                  </h6>
                   <p className="text-sm text-[#8A8AB9]">
                     Registered Complaints
                   </p>

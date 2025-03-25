@@ -1,44 +1,45 @@
 "use client";
 import React, { useState } from "react";
-import { PhoneCallIcon } from "lucide-react";
-import { FiWifi, FiTv, FiCreditCard } from "react-icons/fi";
 import { Card, CardContent } from "@/components/ui/card";
 import PurchaseAirtime from "./airtimePurchaseForm";
 import { Button } from "@/components/ui/button";
 import { DialogModal } from "@/components/shared/dialogModal";
+import Image from "next/image";
+import PageHeader from "@/components/shared/pageheader";
+import { FaHome } from "react-icons/fa";
 
 const data = [
   {
-    name: "MTN",
+    name: "mtn",
     description: "everywhere you go",
-    icon: PhoneCallIcon,
-    color: "#2E94C5",
-    nameColor: "#FFCC00",
-    bg: "#E6F7FF",
+    img: "/images/mtn logo.jpg",
+    color: "#FFC415",
+    nameColor: "#FFC415",
+    bg: "#FFF9E2",
   },
   {
-    name: "Airtel",
+    name: "airtel",
     description: "smartphone network",
-    icon: FiWifi,
-    color: "#009900",
-    nameColor: "#E60000",
-    bg: "#E6FFE6",
+    img: "/images/airtel logo.png",
+    color: "#B50000",
+    nameColor: "#B50000",
+    bg: "#FFE6E6",
   },
   {
     name: "9mobile",
     description: "here for you",
-    icon: FiTv,
-    color: "#E88B2E",
-    nameColor: "#008000",
-    bg: "#FFF5E6",
+    img: "/images/9mobile logo.png",
+    color: "#005900",
+    nameColor: "#005900",
+    bg: "#E6FFE6",
   },
   {
-    name: "Glo",
+    name: "glo",
     description: "rule your world",
-    icon: FiCreditCard,
-    color: "#2E94C5",
-    nameColor: "#009900",
-    bg: "#E6F7FF",
+    img: "/images/glo logo.jpg",
+    color: "#007300",
+    nameColor: "#007300",
+    bg: "#E6FFE6",
   },
 ];
 
@@ -60,52 +61,65 @@ export default function AirtimeDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#EFEFF5] p-8 mt-10">
-      <h1 className="text-4xl font-bold text-[#00005D] mt-3">Airtime</h1>
-      <p className="text-[16px] font-medium text-[#333385] mb-2">
-        Purchase Airtime at an affordable rate
-      </p>
+    <div className="min-h-screen bg-[#EFEFF5] p-8 mt-3">
+      <PageHeader
+        icon={<FaHome size={20} />}
+        title="Dashboard"
+        subtitle="Airtime Purchase"
+        description="Purchase Airtime at an affordable rate"
+      />
 
       {/* Network Provider Selection (as Radio Buttons) */}
       <div className="grid md:grid-cols-4 gap-4 mt-6">
-        {data.map(({ name, description, icon: Icon, color, nameColor, bg }) => (
-          <label key={name} className="cursor-pointer">
-            <Card className="px-3 py-2.5 h-[107px] flex items-center rounded-[6px]">
-              <input
-                type="radio"
-                name="network"
-                value={name}
-                checked={selected === name}
-                onChange={() => setSelected(name)}
-                className="hidden"
-              />
-              <div className="absolute top-2 right-4 w-4 h-4 border-2 border-[#D9D9D9] rounded-full flex items-center justify-center">
-                <div
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{
-                    backgroundColor: selected === name ? "#00005D" : "#D9D9D9",
-                  }}
-                ></div>
+        {data.map(({ name, description, img, color, nameColor, bg }) => (
+          <Card
+            key={name}
+            onClick={() => setSelected(name)}
+            className={`cursor-pointer px-2 py-2 h-[80px] sm:h-[100px] flex items-center rounded-[6px] 
+                          xs:scale-75 sm:scale-90 md:scale-100 transition-all duration-200 border-2`}
+            style={{
+              borderColor: selected === name ? color : "transparent",
+            }}
+          >
+            {/* Selectable Checkbox */}
+            <div
+              className="absolute top-2 right-4 w-4 h-4 border-2 rounded-full flex items-center justify-center"
+              style={{
+                borderColor: selected === name ? color : "#D9D9D9",
+              }}
+            >
+              <div
+                className="w-2.5 h-2.5 rounded-full transition-colors duration-200"
+                style={{
+                  backgroundColor: selected === name ? color : "#D9D9D9",
+                }}
+              ></div>
+            </div>
+
+            <div className="flex items-center gap-2 mt-4">
+              <div
+                className="w-[44px] h-[44px] rounded-full overflow-hidden"
+                style={{ backgroundColor: bg }}
+              >
+                <Image
+                  src={img}
+                  alt={name}
+                  width={44}
+                  height={44}
+                  className="w-full h-full"
+                />
               </div>
-              <div className="flex items-center gap-2 mt-4">
-                <div
-                  className="flex justify-center items-center w-10 h-10 rounded-full"
-                  style={{ backgroundColor: bg }}
+              <div>
+                <p
+                  className="text-[18px] font-bold"
+                  style={{ color: nameColor }}
                 >
-                  <Icon size={24} style={{ color }} />
-                </div>
-                <div>
-                  <p
-                    className="text-[18px] font-bold"
-                    style={{ color: nameColor }}
-                  >
-                    {name}
-                  </p>
-                  <p className="text-sm text-[#8A8AB9]">{description}</p>
-                </div>
+                  {name}
+                </p>
+                <p className="text-sm text-[#8A8AB9]">{description}</p>
               </div>
-            </Card>
-          </label>
+            </div>
+          </Card>
         ))}
       </div>
 

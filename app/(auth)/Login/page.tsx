@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useUser } from "@/app/context/UserContext";
+import { useUser } from "@/providers/context/UserContext";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
