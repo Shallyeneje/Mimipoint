@@ -1,11 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { PhoneCallIcon } from "lucide-react";
-import { FiWifi, FiHome, FiTv, FiCreditCard } from "react-icons/fi";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import DataCards from "./DataCards";
 import { dataPlans, NetworkDataPlans } from "@/api/static-data";
-import clsx from "clsx";
 import Image from "next/image";
 import PageHeader from "@/components/shared/pageheader";
 import { FaHome } from "react-icons/fa";

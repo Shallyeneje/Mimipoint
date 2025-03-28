@@ -5,21 +5,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DialogModal } from "@/components/shared/dialogModal";
 import { Button } from "@/components/ui/button";
 import { DataPlan, NetworkDataPlans } from "@/api/static-data";
+import toast from "react-hot-toast";
+import { BiWalletAlt } from "react-icons/bi";
+import { CgSpinner } from "react-icons/cg";
+import { useRouter } from "next/navigation";
 
 interface DataTabProps {
   data: {
     [planName: string]: DataPlan;
   };
-  onCardClick: (data: string, price: number) => void;
+  onCardClick: (bundleID: string, data: string, price: number) => void;
 }
 
 const DataTab: React.FC<DataTabProps> = ({ data, onCardClick }) => (
-  <div className="grid grid-cols-3 gap-4 mt-6">
-    {Object.values(data).map(({ data, price, duration }, index) => (
+  <div className="grid grid-cols-4 gap-4 mt-6">
+    {Object.entries(data).map(([key, { data, price, duration }]) => (
       <Card
-        key={`${data}-${index}`}
+        key={key}
         className="h-[100px] flex items-center p-3 rounded-[6px] cursor-pointer hover:bg-gray-100 transition"
-        onClick={() => onCardClick(data, price)}
+        onClick={() => onCardClick(key, data, price)}
       >
         <CardContent className="flex flex-col justify-center">
           <h3 className="font-bold text-[#00005D] text-[22px]">{data}</h3>
@@ -32,16 +36,19 @@ const DataTab: React.FC<DataTabProps> = ({ data, onCardClick }) => (
 );
 
 const DataCards = ({ datatoshow }: { datatoshow: NetworkDataPlans | null }) => {
-  const [selectedBundle, setSelectedBundle] = useState("");
-  const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
+  const [bundleID, setBundleID] = useState("");
+  const [bundle, setBundle] = useState("");
   const [amount, setAmount] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
-  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [amountError, setAmountError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsComfirmationModalOpen] = useState(false);
+  const [processing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("");
+  const wallet = 6500;
+
+  const Router = useRouter();
 
   // Update the tab when the data to sc
   useEffect(() => {
@@ -50,11 +57,20 @@ const DataCards = ({ datatoshow }: { datatoshow: NetworkDataPlans | null }) => {
     }
   }, [datatoshow]);
 
-  const handleCardClick = (bundle: string, price: number) => {
-    setSelectedBundle(bundle);
-    setSelectedPrice(price);
+  const handleCardClick = (bundleID: string, bundle: string, price: number) => {
+    setBundleID(bundleID);
+    setBundle(bundle);
     setAmount(price.toString());
     setIsPurchaseModalOpen(true);
+  };
+
+  const handleReset = () => {
+    setAmount("");
+    setBundleID("");
+    setBundle("");
+    setPhoneNumber("");
+    setIsProcessing(false);
+    setIsComfirmationModalOpen(false);
   };
 
   const validateInputs = () => {
@@ -78,8 +94,16 @@ const DataCards = ({ datatoshow }: { datatoshow: NetworkDataPlans | null }) => {
 
     if (isValid) {
       setIsPurchaseModalOpen(false);
-      setIsCompleteModalOpen(true);
+      setIsComfirmationModalOpen(true);
     }
+  };
+
+  const handleDataPurchase = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      toast.success("Data Purchase was Successful");
+      handleReset();
+    }, 3000);
   };
 
   return (
@@ -107,14 +131,17 @@ const DataCards = ({ datatoshow }: { datatoshow: NetworkDataPlans | null }) => {
             </Tabs>
           )}
         </main>
-        <aside className="w-64">
+        {/* <aside className="w-64">
           <DataPurchaseForm />
-        </aside>
+        </aside> */}
       </div>
 
       <DialogModal
         open={isPurchaseModalOpen}
-        setOpen={setIsPurchaseModalOpen}
+        setOpen={() => {
+          handleReset();
+          setIsPurchaseModalOpen(!isPurchaseModalOpen);
+        }}
         title="Complete Payment"
         showFooter={false}
       >
@@ -170,6 +197,102 @@ const DataCards = ({ datatoshow }: { datatoshow: NetworkDataPlans | null }) => {
           >
             Purchase Data
           </Button>
+        </div>
+      </DialogModal>
+
+      {/* Confirmation Modal */}
+      <DialogModal
+        open={isConfirmationModalOpen}
+        setOpen={() => {
+          handleReset();
+          setIsComfirmationModalOpen(!isConfirmationModalOpen);
+        }}
+        title=""
+        showFooter={false}
+      >
+        <div>
+          <h3 className="text-indigo-950 text-base text-center font-medium leading-7">
+            Payment Summary
+          </h3>
+          <h2 className="text-center text-indigo-950 text-3xl leading-10">
+            ₦{amount}
+          </h2>
+        </div>
+
+        <div>
+          <div className="flex justify-between items-start px-3">
+            <p className="text-indigo-950 text-base font-medium leading-7">
+              BundleID :
+            </p>
+            <p className="text-indigo-950 text-sm font-medium leading-snug">
+              {bundleID}
+            </p>
+          </div>
+
+          <div className="flex justify-between items-start px-3">
+            <p className="text-indigo-950 text-base font-medium leading-7">
+              Bundle :
+            </p>
+            <p className="text-indigo-950 text-sm font-medium leading-snug">
+              {bundle}
+            </p>
+          </div>
+
+          <div className="px-3 flex justify-between">
+            <p className="text-indigo-950 text-base font-medium leading-7">
+              Phone :
+            </p>
+            <p className="text-indigo-950 text-sm font-medium leading-snug">
+              {phoneNumber}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex justify-between px-5 py-2 bg-gray-100 rounded-[10px]">
+          <div className="flex justify-start items-center gap-2.5 text-[#8A8AB9]">
+            <BiWalletAlt size={20} />
+            <div className="text-sm font-medium">wallet</div>
+          </div>
+          <div className="text-indigo-950 text-sm font-bold">: ₦{wallet}</div>
+        </div>
+
+        <div className="flex flex-col gap-3 mt-4">
+          <Button
+            className="bg-[#00005D] text-white w-full"
+            onClick={() => handleDataPurchase()}
+            disabled={processing || Number(amount) > wallet}
+          >
+            {processing ? (
+              <span className="flex items-center justify-center gap-2">
+                <CgSpinner className="animate-spin" />
+                Processing...
+              </span>
+            ) : (
+              "Complete Payment"
+            )}
+          </Button>
+
+          {Number(amount) > wallet ? (
+            <Button
+              className="w-full text-sm bg-[#00005D] text-white font-medium py-2 rounded-[6px] cursor-pointer"
+              onClick={() => {
+                setIsComfirmationModalOpen(false);
+                Router.push("/wallet");
+              }}
+            >
+              Top up wallet
+            </Button>
+          ) : (
+            <Button
+              className="w-full text-sm bg-red-600 text-white font-medium py-2 rounded-[6px] hover:bg-red-600"
+              onClick={() => {
+                handleReset();
+                setIsComfirmationModalOpen(false)
+              }}
+            >
+              Cancel payment
+            </Button>
+          )}
         </div>
       </DialogModal>
     </div>

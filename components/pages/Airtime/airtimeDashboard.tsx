@@ -7,6 +7,9 @@ import { DialogModal } from "@/components/shared/dialogModal";
 import Image from "next/image";
 import PageHeader from "@/components/shared/pageheader";
 import { FaHome } from "react-icons/fa";
+import { BiWalletAlt } from "react-icons/bi";
+import toast from "react-hot-toast";
+import { CgSpinner } from "react-icons/cg";
 
 const data = [
   {
@@ -50,7 +53,10 @@ export default function AirtimeDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmationModal, setConfirmationModal] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
+  const wallet = 6500;
 
+  // Handle Payment
   const handlePayment = () => {
     if (!phoneNumber.trim()) {
       setError("Phone number is required.");
@@ -58,6 +64,23 @@ export default function AirtimeDashboard() {
     }
     setIsModalOpen(false);
     setConfirmationModal(true);
+  };
+
+  // Reset the Form inputs
+  const handleReset = () => {
+    setSelected(null);
+    setAmount("");
+    setPhoneNumber("");
+  };
+
+  const handleAirtimePurchase = () => {
+    setProcessingPayment(true);
+    setTimeout(() => {
+      setProcessingPayment(false);
+      setConfirmationModal(false);
+      toast.success("Airtime Purchase was Successful");
+      handleReset();
+    }, 3000);
   };
 
   return (
@@ -133,6 +156,9 @@ export default function AirtimeDashboard() {
                 key={index}
                 className="h-[100px] flex items-center p-4 rounded-[6px] cursor-pointer"
                 onClick={() => {
+                  if (!selected) {
+                    return toast.error("select a network provider first");
+                  }
                   setAmount(price);
                   setIsModalOpen(true);
                 }}
@@ -152,7 +178,7 @@ export default function AirtimeDashboard() {
           <DialogModal
             open={isModalOpen}
             setOpen={setIsModalOpen}
-            title="Complete Payment "
+            title="Complete Payment"
             showFooter={false}
           >
             <div className="flex flex-col">
@@ -203,25 +229,61 @@ export default function AirtimeDashboard() {
           {/* Confirmation Modal */}
           <DialogModal
             open={confirmationModal}
-            setOpen={setConfirmationModal}
-            title="Airtime Purchase"
+            setOpen={() => {
+              handleReset();
+              setConfirmationModal(!confirmationModal);
+            }}
+            title=""
             showFooter={false}
           >
-            <h2 className="text-blue-900 text-3xl font-bold text-center">
-              ₦{amount}
-            </h2>
-            <p className="text-sm font-medium">
-              Product: <span className="font-bold">{selected}</span>
-            </p>
-            <p className="text-sm font-medium">
-              Cashback: <span className="font-bold text-blue-600">₦50</span>
-            </p>
-            <div className="bg-gray-200 p-2 rounded-md mt-4 flex justify-between text-sm font-medium">
-              <span>💳 Wallet</span> <span>: ₦650</span>
+            <div>
+              <h3 className="text-indigo-950 text-base text-center font-medium leading-7">
+                Payment Summary
+              </h3>
+              <h2 className="text-center text-indigo-950 text-3xl leading-10">
+                ₦{amount}
+              </h2>
             </div>
+
+            <div className="flex justify-between items-start px-3">
+              <p className="text-indigo-950 text-base font-medium leading-7">
+                Product :
+              </p>
+              <p className="text-indigo-950 text-sm font-medium leading-snug">
+                {selected}
+              </p>
+            </div>
+
+            <div className="px-3">
+              <p className="text-sm font-medium">
+                Cashback: <span className="font-bold text-primary">₦50</span>
+              </p>
+            </div>
+
+            <div className="flex justify-between px-5 py-2 bg-gray-100 rounded-[10px]">
+              <div className="flex justify-start items-center gap-2.5 text-[#8A8AB9]">
+                <BiWalletAlt size={20} />
+                <div className="text-sm font-medium">wallet</div>
+              </div>
+              <div className="text-indigo-950 text-sm font-bold">
+                : ₦{wallet}
+              </div>
+            </div>
+
             <div className="flex flex-col gap-2 mt-4">
-              <Button className="bg-[#00005D] text-white w-full">
-                Complete Payment
+              <Button
+                className="bg-[#00005D] text-white w-full"
+                onClick={() => handleAirtimePurchase()}
+                disabled={processingPayment}
+              >
+                {processingPayment ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <CgSpinner className="animate-spin" />
+                    Processing...
+                  </span>
+                ) : (
+                  "Complete Payment"
+                )}
               </Button>
               <button
                 className="w-full bg-[#E30B17] text-white py-2 rounded-md font-medium hover:bg-red-700 transition"
@@ -235,7 +297,11 @@ export default function AirtimeDashboard() {
 
         {/* Sidebar: Purchase Airtime */}
         <aside className="w-64 ">
-          <PurchaseAirtime />
+          <PurchaseAirtime
+            wallet={wallet}
+            selectedProduct={selected}
+            setSelectedProduct={setSelected}
+          />
         </aside>
       </div>
     </div>

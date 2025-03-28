@@ -20,6 +20,7 @@ export default function ElectricityDashboard() {
   const [selectedProvider, setSelectedProvider] =
     useState<ElectricityProvider | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  
   return (
     <div className="min-h-screen bg-[#EFEFF5] p-8 mt-3">
       <PageHeader

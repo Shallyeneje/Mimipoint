@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { PhoneCallIcon } from "lucide-react";
 import { FiWifi, FiHome, FiTv, FiCreditCard } from "react-icons/fi";
 import { Card, CardContent } from "@/components/ui/card";
-import AirtimeTransactions from "./airtimeTransactions";
+import Transactions from "@/components/shared/transactions";
 
 const data = [
   {
@@ -147,7 +147,7 @@ export default function SuccessDashboard() {
         </aside>
       </div>
       <div className="mt-10">
-        <AirtimeTransactions />
+        <Transactions />
       </div>
     </div>
   );
