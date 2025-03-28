@@ -81,9 +81,9 @@ export const dataPlans: Record<string, NetworkDataPlans> = {
 };
 
 // Define the structure for Cable TV Packages
-type CableTvProviders = "dstv" | "gotv" | "startimes";
+export type CableTvProviders = "dstv" | "gotv" | "startimes";
 
-type CableTvPackages = Record<CableTvProviders, Record<string, string>>;
+export type CableTvPackages = Record<CableTvProviders, Record<string, string>>;
 
 export const cableTvPackages: CableTvPackages = {
   dstv: {
