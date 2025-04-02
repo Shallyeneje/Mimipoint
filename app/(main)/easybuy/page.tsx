@@ -1,9 +1,10 @@
+import EasybuyContainer from '@/components/pages/easybuy/easybuy-container'
 import React from 'react'
-import ElectricityDashboard from '@/components/pages/Electricity/electricityDashboard'
+
 const page = () => {
   return (
     <div>
-      <ElectricityDashboard/>
+      <EasybuyContainer />
     </div>
   )
 }

@@ -1,9 +1,9 @@
 import React from 'react'
-import ElectricityDashboard from '@/components/pages/Electricity/electricityDashboard'
+import ExchangeContainer from '@/components/pages/exchange/exchange-container'
 const page = () => {
   return (
     <div>
-      <ElectricityDashboard/>
+      <ExchangeContainer />
     </div>
   )
 }

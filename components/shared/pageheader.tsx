@@ -1,3 +1,5 @@
+"use client";
+import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
 interface PageHeaderProps {
@@ -7,7 +9,13 @@ interface PageHeaderProps {
   description: string;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ icon, title, subtitle, description }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({
+  icon,
+  title,
+  subtitle,
+  description,
+}) => {
+  const pathname = usePathname();
   return (
     <div className="max-w-[439px] mt-10 space-y-2">
       <h2 className="text-sm font-bold flex items-center gap-2">
