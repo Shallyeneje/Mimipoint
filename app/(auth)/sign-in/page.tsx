@@ -4,10 +4,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { OAuthStrategy } from "@clerk/types";
 
 export default function LoginPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const [emailAddress, setEmailAddress] = useState("");
+
   const [password, setPassword] = useState("");
   const router = useRouter();
 
@@ -38,6 +40,24 @@ export default function LoginPage() {
       console.error("error", err.errors[0].message);
       toast.error(err.errors[0].message);
     }
+  };
+
+  // sign in with Oauth
+  const signInWith = (strategy: OAuthStrategy) => {
+    if (!signIn) return null;
+    return signIn
+      .authenticateWithRedirect({
+        strategy,
+        redirectUrl: "/sign-up/sso-callback",
+        redirectUrlComplete: "/",
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err: any) => {
+        console.log(err.errors);
+        console.error(err, null, 2);
+      });
   };
 
   return (
@@ -115,7 +135,10 @@ export default function LoginPage() {
             </div>
 
             {/* Google Sign-In */}
-            <button className="w-full flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-[6px] font-semibold  hover:bg-gray-100 cursor-pointer text-[#00005D]">
+            <button
+              className="w-full flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-[6px] font-semibold  hover:bg-gray-100 cursor-pointer text-[#00005D]"
+              onClick={() => signInWith("oauth_google")}
+            >
               <img
                 src="https://developers.google.com/identity/images/g-logo.png"
                 alt="Google Logo"

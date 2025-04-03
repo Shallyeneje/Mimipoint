@@ -49,13 +49,22 @@ const Navbar = ({ activeRoute, toggleSidebar }: NavbarProps) => {
 
         {/* Profile Section */}
         <div className="flex items-center gap-2">
-          <Image
-            src="/images/profile image.png"
-            alt="Profile"
-            className="w-8 h-8 rounded-full border"
-            width={32}
-            height={32}
-          />
+          {user?.imageUrl ? (
+            <div className="w-[32px] h-[32px] rounded-full bg-gray-200 overflow-hidden">
+              <Image
+                src={user.imageUrl}
+                alt="Profile image"
+                height={36}
+                width={36}
+                quality={100}
+                className="w-full h-full"
+              />
+            </div>
+          ) : (
+            <div className="w-[36px] h-[36px] rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
+              {user?.firstName?.charAt(0)}
+            </div>
+          )}
           <div className="hidden sm:block">
             <p className="text-sm font-bold ">
               {user?.firstName ? user?.firstName : "Not available"}{" "}

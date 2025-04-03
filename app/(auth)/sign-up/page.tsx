@@ -14,6 +14,8 @@ export default function Register() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const { signIn } = useSignIn();
   const [emailAddress, setEmailAddress] = useState("");
+  const [lastname, setLastName] = useState("");
+  const [firstname, setFirstname] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +29,7 @@ export default function Register() {
     return null;
   }
 
+  // sign up flow
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -56,6 +59,7 @@ export default function Register() {
     }
   };
 
+  // verification
   const onPressVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLoaded) {
@@ -83,6 +87,7 @@ export default function Register() {
     }
   };
 
+  // sign in with Oauth
   const signInWith = (strategy: OAuthStrategy) => {
     if (!signIn) return null;
     return signIn
@@ -121,6 +126,33 @@ export default function Register() {
 
             {!pendingVerification ? (
               <form onSubmit={handleSubmit} className="space-y-4 bg-white">
+                <div className="flex gap-3 w-full">
+                  {/* firstname */}
+                  <div className="flex-1">
+                    <label className="block text-sm ">Firstname</label>
+                    <input
+                      type="text"
+                      className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D] outline-none"
+                      placeholder="Enter your Firstname"
+                      value={firstname}
+                      onChange={(e) => setFirstname(e.target.value)}
+                      required
+                    />
+                  </div>
+                  {/* lastname */}
+                  <div className="flex-1">
+                    <label className="block text-sm ">Lastname</label>
+                    <input
+                      type="text"
+                      className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D] outline-none"
+                      placeholder="Enter your Lastname"
+                      value={lastname}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
                 {/* Email Input */}
                 <div>
                   <label className="block text-sm">Email</label>
@@ -160,15 +192,14 @@ export default function Register() {
                   />
                 </div>
 
-                {/* Clerk CAPTCHA */}
-                <div id="clerk-captcha"></div>
-
                 {/* Submit Button */}
                 <button
                   type="submit"
                   className="w-full bg-[#00005D] text-white py-2 rounded-sm font-semibold hover:bg-blue-900 transition"
                   disabled={
                     loading ||
+                    firstname.trim() === "" ||
+                    lastname.trim() === "" ||
                     emailAddress.trim() === "" ||
                     password.trim() === "" ||
                     confirmPassword.trim() === "" ||
