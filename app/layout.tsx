@@ -1,6 +1,7 @@
 import Providers from "@/providers";
 import "./globals.css";
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Mimipoint",
@@ -14,10 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="antialiased" suppressHydrationWarning>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className="antialiased" suppressHydrationWarning>
+          <Providers>{children}</Providers>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

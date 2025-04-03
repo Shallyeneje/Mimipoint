@@ -15,7 +15,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Sidebar and Content Layout */}
       <div>
-        <SidebarProvider >
+        <SidebarProvider>
           <SidebarComponent />
           <main className=" w-screen">{children}</main>
         </SidebarProvider>
