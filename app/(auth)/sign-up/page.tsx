@@ -2,15 +2,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useSignUp } from "@clerk/nextjs";
+import { useSignUp, useSignIn } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
+import { OAuthStrategy } from "@clerk/types";
 
 export default function Register() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { signIn } = useSignIn();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -79,6 +81,23 @@ export default function Register() {
     } finally {
       setLoading(true);
     }
+  };
+
+  const signInWith = (strategy: OAuthStrategy) => {
+    if (!signIn) return null;
+    return signIn
+      .authenticateWithRedirect({
+        strategy,
+        redirectUrl: "/sign-up/sso-callback",
+        redirectUrlComplete: "/",
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err: any) => {
+        console.log(err.errors);
+        console.error(err, null, 2);
+      });
   };
 
   return (
@@ -205,7 +224,10 @@ export default function Register() {
             </div>
 
             {/* Google Sign-In */}
-            <button className="w-full flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-[6px] font-semibold hover:bg-gray-100 text-[#00005D]">
+            <button
+              className="w-full flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-[6px] font-semibold hover:bg-gray-100 text-[#00005D]"
+              onClick={() => signInWith("oauth_google")}
+            >
               <img
                 src="https://developers.google.com/identity/images/g-logo.png"
                 alt="Google Logo"

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaUpload, FaHome } from "react-icons/fa";
+import PageHeader from "@/components/shared/pageheader";
 
 export default function EditProfile() {
   const router = useRouter();
@@ -55,14 +56,15 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-[#EFEFF5] p-10">
-      <div className="w-64 hidden md:block">
-        <h2 className="text-sm font-bold flex items-center gap-2">
-          <FaHome size={20} /> Dashboard
-        </h2>
-      </div>
-      <h1 className="text-4xl font-bold text-[#00005D] mt-3">Account Info</h1>
-      <p className="text-[16px] font-medium text-[#333385]">Welcome, Gozzy</p>
+    <div className="min-h-screen bg-[#EFEFF5] p-8 mt-3">
+      <PageHeader
+        icon={<FaHome size={20} />}
+        title="Dashboard"
+        subtitle="Account Info"
+        description="view and manage your Profile from here"
+      />
+
+
       <div className="flex justify-center items-center">
         <div className="bg-white m-5 rounded-lg p-[50px] w-full max-w-3xl">
           <h2 className="text-xl font-bold text-[#00005D] mb-4">

@@ -3,13 +3,9 @@ import Link from "next/link";
 // import DashboardCard from "./dashboardCard";
 import RecentActions from "./rectactions";
 // import { Wallet, List, Megaphone } from "lucide-react";
-
 import { useEffect, useState } from "react";
-
 import { MegaphoneIcon, ArrowUpDown, PhoneCallIcon } from "lucide-react";
 import {
-  FiHome,
-  FiPhoneCall,
   FiWifi,
   FiTv,
   FiCreditCard,
@@ -20,6 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/shared/pageheader";
 import { FaHome } from "react-icons/fa";
+import { useUser } from "@clerk/nextjs";
+
 const services = [
   {
     name: "Buy Airtime",
@@ -74,6 +72,7 @@ interface DashboardData {
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useUser();
 
   useEffect(() => {
     // Simulating an API response with a delay
@@ -103,7 +102,13 @@ export default function Dashboard() {
           icon={<FaHome size={20} />}
           title="Dashboard"
           subtitle="Dashboard"
-          description="Welcome, Gozzy"
+          description={
+            user?.username
+              ? `Welcome, 
+            ${user?.username}
+            `
+              : ""
+          }
         />
         <Button
           className="w-[210px] bg-[#00005D] text-[14px] text-white mt-10"

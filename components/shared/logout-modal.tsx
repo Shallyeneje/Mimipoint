@@ -9,8 +9,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-// import Cookies from "js-cookie";
-// import { useUser } from "@/providers/context/user-context";
+import { useClerk } from '@clerk/nextjs'
 
 type LogoutModalProps = {
   open: boolean;
@@ -18,19 +17,16 @@ type LogoutModalProps = {
 };
 
 const LogoutModal = ({ open, handleToggle }: LogoutModalProps) => {
-  const router = useRouter();
-  // const { setUser } = useUser()
+  const { signOut } = useClerk() 
 
-  const clearCookies = () => {
-    // Cookies.remove("access_token");
-    // Cookies.remove("refresh_token");
+  const Logout = async () => {
+    try {
+      await signOut({ redirectUrl: '/' });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
-  const Logout = () => {
-    // clearCookies();
-    // setUser(null);
-    // router.push("/login");
-  };
   return (
     <AlertDialog open={open} onOpenChange={handleToggle}>
       <AlertDialogContent>
@@ -42,13 +38,7 @@ const LogoutModal = ({ open, handleToggle }: LogoutModalProps) => {
         </AlertDialogDescription>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              Logout();
-            }}
-          >
-            Continue
-          </AlertDialogAction>
+          <AlertDialogAction onClick={Logout}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
