@@ -18,6 +18,7 @@ const ProfileCard = () => {
   const role = "Customer";
   const gender = "Male";
   const dateJoined = "4th Dec, 2025";
+  
   const balance = 765;
   const transactions = 34;
 
