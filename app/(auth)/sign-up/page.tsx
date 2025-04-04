@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import { OAuthStrategy } from "@clerk/types";
+import PasswordInput from "@/components/pages/auth/password-input";
 
 export default function Register() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -21,8 +22,6 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState("");
-
-  // const { login } = useUser();
   const router = useRouter();
 
   if (!isLoaded) {
@@ -45,6 +44,8 @@ export default function Register() {
 
     try {
       await signUp.create({
+        firstName: firstname,
+        lastName: lastname,
         emailAddress,
         password,
       });
@@ -62,28 +63,40 @@ export default function Register() {
   // verification
   const onPressVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isLoaded) {
+
+    if (!isLoaded) return;
+
+    if (!signUp) {
+      toast.error("Sign-up session is missing.");
+      return;
+    }
+
+    if (!code) {
+      toast.error("Please enter the verification code.");
       return;
     }
 
     setLoading(true);
+
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
+
       if (completeSignUp.status !== "complete") {
         console.log(JSON.stringify(completeSignUp, null, 2));
+        toast.error("Verification incomplete. Please try again.");
+        return;
       }
 
-      if (completeSignUp.status === "complete") {
-        await setActive({ session: completeSignUp.createdSessionId });
-        router.push("/");
-      }
+      await setActive({ session: completeSignUp.createdSessionId });
+      toast.success("Email verified successfully!");
+      router.push("/");
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
-      toast.error(err.errors[0].message);
+      toast.error(err.errors?.[0]?.message || "Verification failed.");
     } finally {
-      setLoading(true);
+      setLoading(false); // ✅ Stops endless loading
     }
   };
 
@@ -125,14 +138,14 @@ export default function Register() {
             </h1>
 
             {!pendingVerification ? (
-              <form onSubmit={handleSubmit} className="space-y-4 bg-white">
+              <form onSubmit={handleSubmit} className="space-y-5 bg-white">
                 <div className="flex gap-3 w-full">
                   {/* firstname */}
                   <div className="flex-1">
-                    <label className="block text-sm ">Firstname</label>
-                    <input
+                    <Label className="">Firstname</Label>
+                    <Input
                       type="text"
-                      className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D] outline-none"
+                      className=""
                       placeholder="Enter your Firstname"
                       value={firstname}
                       onChange={(e) => setFirstname(e.target.value)}
@@ -141,10 +154,10 @@ export default function Register() {
                   </div>
                   {/* lastname */}
                   <div className="flex-1">
-                    <label className="block text-sm ">Lastname</label>
-                    <input
+                    <Label className="">Lastname</Label>
+                    <Input
                       type="text"
-                      className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D] outline-none"
+                      className=""
                       placeholder="Enter your Lastname"
                       value={lastname}
                       onChange={(e) => setLastName(e.target.value)}
@@ -155,10 +168,9 @@ export default function Register() {
 
                 {/* Email Input */}
                 <div>
-                  <label className="block text-sm">Email</label>
-                  <input
+                  <Label className="">Email</Label>
+                  <Input
                     type="email"
-                    className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D]"
                     placeholder="Enter your email"
                     value={emailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
@@ -168,34 +180,28 @@ export default function Register() {
 
                 {/* Password Input */}
                 <div>
-                  <label className="block text-sm">Password</label>
-                  <input
-                    type="password"
-                    className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D]"
-                    placeholder="Enter your password"
+                  <Label className="">Password</Label>
+                  <PasswordInput
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
+                    placeholder="Enter your password"
                   />
                 </div>
 
                 {/* Confirm Password Input */}
                 <div>
-                  <label className="block text-sm">Confirm Password</label>
-                  <input
-                    type="password"
-                    className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D]"
-                    placeholder="Re-enter your password"
+                  <Label className="">Confirm Password</Label>
+                  <PasswordInput
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
+                    placeholder="Enter your password"
                   />
                 </div>
 
                 {/* Submit Button */}
-                <button
+                <Button
                   type="submit"
-                  className="w-full bg-[#00005D] text-white py-2 rounded-sm font-semibold hover:bg-blue-900 transition"
+                  className="w-full my-2"
                   disabled={
                     loading ||
                     firstname.trim() === "" ||
@@ -214,7 +220,7 @@ export default function Register() {
                   ) : (
                     "Create Account"
                   )}
-                </button>
+                </Button>
               </form>
             ) : (
               <form onSubmit={onPressVerify} className="space-y-4">
@@ -245,27 +251,30 @@ export default function Register() {
               </form>
             )}
 
-            {/* Divider */}
-            <div className="flex items-center my-4">
-              <div className="flex-1 border-t border-[#333385]"></div>
-              <span className="mx-3 text-sm text-[#333385]">
-                or Continue with
-              </span>
-              <div className="flex-1 border-t border-[#333385]"></div>
-            </div>
+            {!pendingVerification && (
+              <>
+                <div className="flex items-center my-4">
+                  <div className="flex-1 border-t border-[#333385]"></div>
+                  <span className="mx-3 text-sm text-[#333385]">
+                    or Continue with
+                  </span>
+                  <div className="flex-1 border-t border-[#333385]"></div>
+                </div>
 
-            {/* Google Sign-In */}
-            <button
-              className="w-full flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-[6px] font-semibold hover:bg-gray-100 text-[#00005D]"
-              onClick={() => signInWith("oauth_google")}
-            >
-              <img
-                src="https://developers.google.com/identity/images/g-logo.png"
-                alt="Google Logo"
-                className="w-5 h-5"
-              />
-              Google
-            </button>
+                {/* Google Sign-In */}
+                <button
+                  className="w-full flex items-center justify-center gap-2 py-2 border border-gray-300 rounded-[6px] font-semibold hover:bg-gray-100 text-[#00005D]"
+                  onClick={() => signInWith("oauth_google")}
+                >
+                  <img
+                    src="https://developers.google.com/identity/images/g-logo.png"
+                    alt="Google Logo"
+                    className="w-5 h-5"
+                  />
+                  Google
+                </button>
+              </>
+            )}
 
             {/* Login Link */}
             <p className="mt-4 text-sm text-left font-semibold">

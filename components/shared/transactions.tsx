@@ -25,7 +25,7 @@ export default function Transactions() {
   const pathname = usePathname();
 
   return (
-    <div className="p-6 pt-0">
+    <div>
       {/* Title */}
 
       {pathname.replace(/\/$/, "") !== "/transactions" && (

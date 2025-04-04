@@ -5,12 +5,17 @@ import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { OAuthStrategy } from "@clerk/types";
+import PasswordInput from "@/components/pages/auth/password-input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { CgSpinner } from "react-icons/cg";
 
 export default function LoginPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
   const [emailAddress, setEmailAddress] = useState("");
-
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   if (!isLoaded) {
@@ -22,7 +27,8 @@ export default function LoginPage() {
     if (!isLoaded) {
       return;
     }
-
+    setLoading(true);
+    if (!signIn) return null;
     try {
       const result = await signIn.create({
         identifier: emailAddress,
@@ -39,6 +45,8 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error("error", err.errors[0].message);
       toast.error(err.errors[0].message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,10 +90,9 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-4 bg-white">
               {/* Email Input */}
               <div>
-                <label className="block text-sm ">Email</label>
-                <input
+                <Label>Email</Label>
+                <Input
                   type="email"
-                  className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D] outline-none"
                   placeholder="Enter your email"
                   value={emailAddress}
                   onChange={(e) => setEmailAddress(e.target.value)}
@@ -95,14 +102,11 @@ export default function LoginPage() {
 
               {/* Password Input */}
               <div>
-                <label className="block text-sm ">Password</label>
-                <input
-                  type="password"
-                  className="w-full mt-1 p-2 border text-xs rounded-[6px] border-[#8A8AB9] focus:ring-[#00005D] focus:border-[#00005D] outline-none"
-                  placeholder="Enter your password"
+                <Label>Password</Label>
+                <PasswordInput
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
+                  placeholder="Enter your password"
                 />
               </div>
 
@@ -117,12 +121,20 @@ export default function LoginPage() {
               </div>
 
               {/* Submit Button */}
-              <button
+              <Button
                 type="submit"
-                className="w-full bg-[#00005D] text-white py-2 rounded-sm font-semibold hover:bg-blue-900 transition"
+                className="w-full my-2"
+                disabled={!emailAddress || !password}
               >
-                submit
-              </button>
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <CgSpinner className="animate-spin" />
+                    Sending code...
+                  </span>
+                ) : (
+                  "Send password reset code"
+                )}
+              </Button>
             </form>
 
             {/* Divider */}

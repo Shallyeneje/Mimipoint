@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/shared/pageheader";
 import { FaHome } from "react-icons/fa";
 import { useUser } from "@clerk/nextjs";
+import Transactions from "@/components/shared/transactions";
 
 const services = [
   {
@@ -214,6 +215,11 @@ export default function Dashboard() {
         <div className="w-64">
           <RecentActions />
         </div>
+      </div>
+
+      {/* Transaction */}
+      <div className="mt-8">
+        <Transactions />
       </div>
     </div>
   );
