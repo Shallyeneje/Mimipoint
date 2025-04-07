@@ -12,12 +12,23 @@ export const useGetWallets = () => {
   });
 };
 
+export const useGetWalletByType = (type: string) => {
+  return useQuery(["wallets", type], async () => {
+    const response = await AxiosinstanceAuth.get(
+      `wallets/?wallet_type=${type}`
+    );
+    return response.data;
+  });
+};
+
+
 export const useGetWalletById = (id: string) => {
   return useQuery(["wallet", id], async () => {
     const response = await AxiosinstanceAuth.get(`wallets/${id}`);
     return response.data;
   });
 };
+
 
 export const useCreateWallet = () => {
   const queryClient = useQueryClient();
@@ -32,7 +43,7 @@ export const useCreateWallet = () => {
       },
     }
   );
-}
+};
 
 export const useDeleteWallet = () => {
   const queryClient = useQueryClient();
@@ -47,8 +58,7 @@ export const useDeleteWallet = () => {
       },
     }
   );
-}
-
+};
 
 // --------------------------------------------------------
 // Transactions Api
@@ -60,7 +70,6 @@ export const useGetTransactions = () => {
     return response.data;
   });
 };
-
 
 export const useGetTransactionById = (id: string) => {
   return useQuery(["transaction", id], async () => {
@@ -74,7 +83,9 @@ export const useVerifyTransaction = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async (reference: string) => {
-      const response = await AxiosinstanceAuth.get(`transactions/verify/${reference}`);
+      const response = await AxiosinstanceAuth.get(
+        `transactions/verify/${reference}`
+      );
       return response.data;
     },
     {
@@ -83,14 +94,17 @@ export const useVerifyTransaction = () => {
       },
     }
   );
-}
+};
 
 // create transaction
 export const useCreateTransaction = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async (transaction: TransactionCreate) => {
-      const response = await AxiosinstanceAuth.post("transactions/", transaction);
+      const response = await AxiosinstanceAuth.post(
+        "transactions/",
+        transaction
+      );
       return response.data;
     },
     {
@@ -99,7 +113,7 @@ export const useCreateTransaction = () => {
       },
     }
   );
-}
+};
 
 // delete transaction
 export const useDeleteTransaction = () => {
@@ -115,4 +129,4 @@ export const useDeleteTransaction = () => {
       },
     }
   );
-}
+};

@@ -29,13 +29,18 @@ import { Separator } from "@/components/ui/separator";
 import { useUser } from "@clerk/nextjs";
 // import Logo from "@/public/logo.png"; // Adjust logo path
 import LogoutModal from "./logout-modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const SidebarComponent = () => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { user } = useUser();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   // console.log(isSignedIn, user);
 
@@ -96,56 +101,57 @@ const SidebarComponent = () => {
       </SidebarContent>
 
       {/* Sidebar Footer - User Profile & Logout */}
-      <SidebarFooter>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="py-4">
-              <SidebarMenuItem className="h-[48px] flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  {/* Avatar */}
-                  {user?.imageUrl ? (
-                    <div className="w-[32px] h-[32px] rounded-full bg-gray-200 overflow-hidden">
-                      <Image
-                        src={user.imageUrl}
-                        alt="Profile image"
-                        height={36}
-                        width={36}
-                        quality={100}
-                        className="w-full h-full"
-                      />
+      {hasMounted && (
+        <SidebarFooter>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu className="py-4">
+                <SidebarMenuItem className="h-[48px] flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    {/* Avatar */}
+                    {user?.imageUrl ? (
+                      <div className="w-[32px] h-[32px] rounded-full bg-gray-200 overflow-hidden">
+                        <Image
+                          src={user.imageUrl}
+                          alt="Profile image"
+                          height={36}
+                          width={36}
+                          quality={100}
+                          className="w-full h-full"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-[36px] h-[36px] rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
+                        {user?.firstName?.charAt(0)}
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <p className="text-primary font-semibold text-sm">
+                        {user?.firstName ? user?.firstName : "Not available"}{" "}
+                        {user?.lastName}
+                      </p>
+                      <p className="text-gray-500 text-xs truncate text-ellipsis max-w-[125px]">
+                        {user?.primaryEmailAddress?.emailAddress}
+                      </p>
                     </div>
-                  ) : (
-                    <div className="w-[36px] h-[36px] rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
-                      {user?.firstName?.charAt(0)}
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <p className="text-primary font-semibold text-sm">
-                      {user?.firstName ? user?.firstName : "Not available"}{" "}
-                      {user?.lastName}
-                    </p>
-                    <p className="text-gray-500 text-xs truncate text-ellipsis max-w-[125px]">
-                      {user?.primaryEmailAddress?.emailAddress}
-                    </p>
+                    {/* Logout Button */}
+                    <Button
+                      className="p-2"
+                      variant="ghost"
+                      onClick={() => setOpen(true)}
+                    >
+                      <LogOut size={18} />
+                    </Button>
                   </div>
-                  {/* Logout Button */}
-                  <Button
-                    className="p-2"
-                    variant="ghost"
-                    onClick={() => setOpen(true)}
-                    
-                  >
-                    <LogOut size={18} />
-                  </Button>
-                </div>
-              </SidebarMenuItem>
+                </SidebarMenuItem>
 
-              {/* Logout Modal */}
-              <LogoutModal open={open} handleToggle={() => setOpen(!open)} />
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarFooter>
+                {/* Logout Modal */}
+                <LogoutModal open={open} handleToggle={() => setOpen(!open)} />
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarFooter>
+      )}
     </Sidebar>
   );
 };

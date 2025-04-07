@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, Search, Bell, MessageSquare } from "lucide-react";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
@@ -11,6 +11,12 @@ interface NavbarProps {
 
 const Navbar = ({ activeRoute, toggleSidebar }: NavbarProps) => {
   const { user } = useUser();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   return (
     <nav className="fixed z-10 bg-white px-5 py-2.5 flex items-center justify-between w-full  border-b-[#8A8AB9]">
       {/* Left Section */}
@@ -48,33 +54,35 @@ const Navbar = ({ activeRoute, toggleSidebar }: NavbarProps) => {
         </div>
 
         {/* Profile Section */}
-        <div className="flex items-center gap-2">
-          {user?.imageUrl ? (
-            <div className="w-[32px] h-[32px] rounded-full bg-gray-200 overflow-hidden">
-              <Image
-                src={user.imageUrl}
-                alt="Profile image"
-                height={36}
-                width={36}
-                quality={100}
-                className="w-full h-full"
-              />
+        {hasMounted && (
+          <div className="flex items-center gap-2">
+            {user?.imageUrl ? (
+              <div className="w-[32px] h-[32px] rounded-full bg-gray-200 overflow-hidden">
+                <Image
+                  src={user.imageUrl}
+                  alt="Profile image"
+                  height={36}
+                  width={36}
+                  quality={100}
+                  className="w-full h-full"
+                />
+              </div>
+            ) : (
+              <div className="w-[36px] h-[36px] rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
+                {user?.firstName?.charAt(0)}
+              </div>
+            )}
+            <div className="hidden sm:block">
+              <p className="text-sm font-bold ">
+                {user?.firstName ? user?.firstName : "Not available"}{" "}
+                {user?.lastName}
+              </p>
+              <p className="text-xs text-gray-500">
+                {user?.primaryEmailAddress?.emailAddress}
+              </p>
             </div>
-          ) : (
-            <div className="w-[36px] h-[36px] rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold">
-              {user?.firstName?.charAt(0)}
-            </div>
-          )}
-          <div className="hidden sm:block">
-            <p className="text-sm font-bold ">
-              {user?.firstName ? user?.firstName : "Not available"}{" "}
-              {user?.lastName}
-            </p>
-            <p className="text-xs text-gray-500">
-              {user?.primaryEmailAddress?.emailAddress}
-            </p>
           </div>
-        </div>
+        )}
       </div>
     </nav>
   );

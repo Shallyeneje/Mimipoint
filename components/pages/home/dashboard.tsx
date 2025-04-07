@@ -3,7 +3,6 @@ import Link from "next/link";
 // import DashboardCard from "./dashboardCard";
 import RecentActions from "./rectactions";
 // import { Wallet, List, Megaphone } from "lucide-react";
-import { useEffect, useState } from "react";
 import { MegaphoneIcon, ArrowUpDown, PhoneCallIcon } from "lucide-react";
 import {
   FiWifi,
@@ -18,6 +17,9 @@ import PageHeader from "@/components/shared/pageheader";
 import { FaHome } from "react-icons/fa";
 import { useUser } from "@clerk/nextjs";
 import Transactions from "@/components/shared/transactions";
+import { useGetComplaints } from "@/api/data/complaints";
+import { useGetTransactions, useGetWallets } from "@/api/data/transactions";
+import { WalletResponse } from "@/types/transaction";
 
 const services = [
   {
@@ -63,38 +65,15 @@ const services = [
     link: "/electricity",
   },
 ];
-interface DashboardData {
-  balance: number;
-  transactions: number;
-  complaints: number;
-  actions: { text: string; type: string }[];
-}
 
 export default function Dashboard() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
   const { user } = useUser();
+  const { data: userComplaints } = useGetComplaints();
+  const { data: userTransactions } = useGetTransactions();
+  const { data: userWallets } = useGetWallets() as {
+    data: WalletResponse[];
+  };
 
-  useEffect(() => {
-    // Simulating an API response with a delay
-    setTimeout(() => {
-      const mockData: DashboardData = {
-        balance: 765,
-        transactions: 34,
-        complaints: 24,
-        actions: [
-          { text: "You bought 500mb MTN CG lite", type: "success" },
-          { text: "You bought 1000 Airtime Airtel CG lite", type: "success" },
-          { text: "You bought 500mb MTN CG lite", type: "success" },
-          { text: "You bought 1000 Airtime Airtel CG lite", type: "success" },
-          { text: "You bought 500mb MTN CG lite", type: "success" },
-          { text: "You bought 1000 Airtime Airtel CG lite", type: "success" },
-        ],
-      };
-      setData(mockData);
-      setLoading(false);
-    }, 1000);
-  }, []);
 
   return (
     <div className="min-h-screen bg-[#EFEFF5] p-8 mt-4">
@@ -104,9 +83,9 @@ export default function Dashboard() {
           title="Dashboard"
           subtitle="Dashboard"
           description={
-            user?.username
+            user?.firstName
               ? `Welcome, 
-            ${user?.username}
+            ${user?.firstName} ${user?.lastName}
             `
               : ""
           }
@@ -120,68 +99,85 @@ export default function Dashboard() {
       </div>
 
       {/* Two Column Layout */}
-      <div className="md:flex gap-3">
-        {/* Sidebar: Main Section */}
-        <div className="flex-1 pt-6">
+      <div className="grid grid-cols-1 md:grid-cols-10 gap-3">
+        {/* Main Content: 70% (7/10) */}
+        <div className="col-span-7 pt-6">
           {/* Stats Section */}
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="px-3 py-2.5 h-[140px]  border-0">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Wallet */}
+            {userWallets?.length > 0 ? (
+              userWallets?.map((wallet) => (
+                <Card
+                  className="px-3 py-2.5 h-[140px] border-0"
+                  key={wallet.id}
+                >
+                  <CardHeader className="gap-0">
+                    <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
+                      <span>Current Balance</span>
+                      <span>
+                        {wallet.wallet_type === "naira"
+                          ? "₦"
+                          : wallet.wallet_type === "usd"
+                          ? "$"
+                          : "₦"}
+                      </span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="gap-0">
+                    <h6 className="text-[40px] font-bold text-[#00005D]">
+                      {wallet?.balance}
+                    </h6>
+                    <p className="text-sm text-[#8A8AB9]">Amount in Wallet</p>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <Card className="px-3 py-2.5 h-[140px] border-0">
                 <CardHeader className="gap-0">
                   <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
                     <span>Current Balance</span>
-                    <span className="">₦</span>
+                    <span>₦</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="gap-0">
-                  <h6 className="text-[40px] font-bold text-[#00005D]">
-                    {data?.balance}
-                  </h6>
+                  <h6 className="text-[40px] font-bold text-[#00005D]">0</h6>
                   <p className="text-sm text-[#8A8AB9]">Amount in Wallet</p>
                 </CardContent>
               </Card>
+            )}
 
-              <Card className="px-3 py-2.5 h-[140px]">
-                <CardHeader className="gap-0">
-                  <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
-                    <span>Transactions</span>
-                    <span className="">
-                      <ArrowUpDown size={18} className="text-[#00005D]" />{" "}
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <h6 className="text-[40px] font-bold text-[#00005D]">
-                    {data?.transactions}
-                  </h6>
-                  <p className="text-sm text-[#8A8AB9]">
-                    Completed transactions
-                  </p>
-                </CardContent>
-              </Card>
+            {/* Transactions */}
+            <Card className="px-3 py-2.5 h-[140px]">
+              <CardHeader className="gap-0">
+                <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
+                  <span>Transactions</span>
+                  <ArrowUpDown size={18} className="text-[#00005D]" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <h6 className="text-[40px] font-bold text-[#00005D]">
+                  {userTransactions?.length || 0}
+                </h6>
+                <p className="text-sm text-[#8A8AB9]">Completed transactions</p>
+              </CardContent>
+            </Card>
 
-              <Card className="px-3 py-2.5 h-[140px]">
-                <CardHeader className="gap-0">
-                  <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
-                    <span>Complaints</span>
-                    <span className="">
-                      <MegaphoneIcon size={22} className="text-[#00005D]" />{" "}
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <h6 className="text-[40px] font-bold text-[#00005D]">
-                    {data?.complaints}
-                  </h6>
-                  <p className="text-sm text-[#8A8AB9]">
-                    Registered Complaints
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+            {/* Complaints */}
+            <Card className="px-3 py-2.5 h-[140px]">
+              <CardHeader className="gap-0">
+                <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
+                  <span>Complaints</span>
+                  <MegaphoneIcon size={22} className="text-[#00005D]" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <h6 className="text-[40px] font-bold text-[#00005D]">
+                  {userComplaints?.length || 0}
+                </h6>
+                <p className="text-sm text-[#8A8AB9]">Registered Complaints</p>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Service Buttons */}
           <div className="grid grid-cols-3 gap-4 mt-6">
@@ -189,7 +185,7 @@ export default function Dashboard() {
               <Link key={name} href={link}>
                 <Card className="p-2 h-[100px] flex items-center justify-center cursor-pointer border-0">
                   <div className="flex items-center">
-                    {/* Icon Column with Circular Background */}
+                    {/* Icon */}
                     <div
                       className="flex justify-center items-center w-10 h-10 rounded-full"
                       style={{ backgroundColor: bg }}
@@ -197,7 +193,7 @@ export default function Dashboard() {
                       <Icon size={24} style={{ color }} />
                     </div>
 
-                    {/* Text Column */}
+                    {/* Text */}
                     <CardContent className="flex flex-col justify-center">
                       <h3 className="font-bold text-xl">{name}</h3>
                       <p className="text-[10px] text-[#8A8AB9] mt-1">
@@ -211,8 +207,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Sidebar: Recent Actions */}
-        <div className="w-64">
+        {/* Sidebar: 30% (3/10) */}
+        <div className="col-span-3">
           <RecentActions />
         </div>
       </div>

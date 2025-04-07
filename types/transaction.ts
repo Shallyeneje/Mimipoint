@@ -5,11 +5,14 @@ export type WalletType = "naira" | "usd" | "crypto"; // Adjust if you have more
 export interface WalletBase {
   user_id: string;    // UUID
   balance: number;
-}
-
-export interface WalletCreate extends WalletBase {
   wallet_type: WalletType;
 }
+
+export interface WalletCreate extends WalletBase 
+{
+  wallet_type: WalletType;
+}
+
 
 export interface WalletUpdate {
   id: string;         // UUID

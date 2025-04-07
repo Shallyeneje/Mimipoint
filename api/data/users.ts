@@ -31,10 +31,16 @@ export const getUserTokenByEmail = async (email: string) => {
 
 // get user activities by id
 export const useGetUserActivitiesById = (id: string) => {
-  return useQuery(["user", id], async () => {
-    const response = await AxiosinstanceAuth.get(`users/activity`);
-    return response.data;
-  });
+  return useQuery(
+    ["user", id],
+    async () => {
+      const response = await AxiosinstanceAuth.get(`users/activity`);
+      return response.data;
+    },
+    {
+      enabled: !!id,
+    }
+  );
 };
 
 // create user

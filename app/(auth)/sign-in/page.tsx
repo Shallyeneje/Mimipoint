@@ -131,7 +131,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full my-2"
-                disabled={!emailAddress || !password}
+                disabled={!emailAddress || !password || loading}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">

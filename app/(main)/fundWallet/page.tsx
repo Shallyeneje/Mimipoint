@@ -3,12 +3,28 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaHome } from "react-icons/fa";
-import { PaystackButton } from "react-paystack";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { DialogModal } from "@/components/shared/dialogModal";
+import PageHeader from "@/components/shared/pageheader";
+import { useUser } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
+import {
+  useCreateTransaction,
+  useGetWalletByType,
+  useGetWallets,
+} from "@/api/data/transactions";
+import { TransactionResponse, WalletResponse } from "@/types/transaction";
+import { getUserId } from "@/utils";
+
+const PaystackButton = dynamic(
+  () => import("@/components/shared/paystack-button"),
+  {
+    ssr: false,
+  }
+);
 
 const FundWallet = () => {
+  const { user } = useUser();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -17,6 +33,12 @@ const FundWallet = () => {
   const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false);
   const [componentProps, setComponentProps] = useState<any>(null); // Corrected useState
   const disabled = !form.name || !form.email || !form.amount; // Fixed condition
+  const { mutateAsync: createTransaction } = useCreateTransaction();
+  const { data: wallets } = useGetWalletByType("naira") as {
+    data: WalletResponse[];
+  };
+  const user_id = getUserId();
+ 
 
   const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
   const [isClient, setIsClient] = useState(false);
@@ -25,7 +47,12 @@ const FundWallet = () => {
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+    setForm({
+      name: user?.firstName || "",
+      email: user?.emailAddresses[0]?.emailAddress || "",
+      amount: "",
+    });
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,48 +61,71 @@ const FundWallet = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!user_id) {
+      toast.error("User ID is missing. Please log in again.");
+      return;
+    }
+
     if (!publicKey) {
       toast.error("Payment configuration error. Public key is missing.");
       return;
     }
 
-    // we send the form data to the server to generate a payment reference
-    // and other details required to initialize the payment
+    try {
+      // create a transaction on the server
+      const transactionData = (await createTransaction({
+        amount: Number(form.amount), // Convert to kobo
+        status: "pending",
+        user_id: user_id,
+        wallet_id: wallets[0]?.id,
+        transaction_type: "topup",
+      })) as TransactionResponse;
 
-    setComponentProps({
-      email: form.email,
-      amount: Number(form.amount) * 100, // Convert to kobo
-      currency: "NGN",
-      reference: `ref-${Date.now()}`, // Unique reference
-      metadata: {
-        custom_fields: [
-          {
-            display_name: "Name",
-            variable_name: "name",
-            value: form.name,
-          },
-        ],
-      },
-      publicKey,
-      text: "Complete Payment",
-      onSuccess: () =>
-        router.push(`/fundWallet/success?reference=${"ref-" + Date.now()}`),
-      onClose: () =>
-        toast.error("Transaction was not completed, window closed."),
-    });
+      setComponentProps({
+        email: form.email,
+        amount: Number(transactionData.amount) * 100, // Convert to kobo
+        currency: "NGN",
+        reference: transactionData.reference,
+        metadata: {
+          custom_fields: [
+            {
+              display_name: "Name",
+              variable_name: "name",
+              value: form.name,
+            },
+          ],
+        },
+        publicKey,
+        text: "Complete Payment",
+        onSuccess: () =>
+          router.push(
+            `/fundWallet/success?reference=${transactionData.reference}`
+          ),
+        onClose: () =>
+          toast.error("Transaction was not completed, window closed."),
+      });
 
-    setShowPaymentConfirmation(true);
+      setShowPaymentConfirmation(true);
+    } catch (error) {
+      console.error("Error creating transaction:", error);
+      toast.error("An error occurred while creating the transaction.");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#EFEFF5] p-8">
-      <div className="w-64 hidden md:block">
-        <h2 className="text-sm font-bold flex items-center gap-2">
-          <FaHome size={20} /> Dashboard
-        </h2>
-      </div>
-      <h1 className="text-4xl font-bold text-[#00005D] mt-3">Dashboard</h1>
-      <p className="text-[16px] font-medium text-[#333385]">Welcome, Gozzy</p>
+    <div className="min-h-screen bg-[#EFEFF5] p-8 mt-4">
+      <PageHeader
+        icon={<FaHome size={20} />}
+        title="Dashboard"
+        subtitle="Dashboard"
+        description={
+          user?.firstName
+            ? `Welcome, 
+            ${user?.firstName} ${user?.lastName}
+            `
+            : ""
+        }
+      />
 
       <div className="flex justify-center items-center">
         <div className="bg-white m-5 rounded-lg p-10 w-full max-w-xl ">

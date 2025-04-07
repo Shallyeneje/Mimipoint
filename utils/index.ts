@@ -25,6 +25,20 @@ export const Auth = {
   },
 };
 
+// Get user ID from cookies
+export const getUserId = (): string | null => {
+  const tokenData = Cookies.get(COOKIE_NAME);
+  if (!tokenData) return null;
+
+  try {
+    const parsed = JSON.parse(tokenData) as TokenType;
+    return parsed.user_id;
+  } catch (error) {
+    console.error("Invalid token cookie:", error);
+    return null;
+  }
+}
+
 // Save token to cookies
 export const saveToken = (data: TokenType) => {
   const { token, user_id, user_email } = data;
