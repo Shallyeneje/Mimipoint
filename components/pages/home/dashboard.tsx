@@ -22,7 +22,6 @@ import { useGetTransactions, useGetWallets } from "@/api/data/transactions";
 import { WalletResponse } from "@/types/transaction";
 import { useGetUserProducts } from "@/api/data/easybuy";
 import { ProductResponse } from "@/types/easybuy";
-import { CgSpinner } from "react-icons/cg";
 
 const services = [
   {

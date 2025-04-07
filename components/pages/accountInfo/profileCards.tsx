@@ -10,17 +10,26 @@ import { HiOutlineMailOpen } from "react-icons/hi";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import PageHeader from "@/components/shared/pageheader";
+import {
+  useGetTransactions,
+  useGetWalletByType,
+} from "@/api/data/transactions";
+import { WalletResponse } from "@/types/transaction";
+import { useGetUserByEmail } from "@/api/data/users";
+import { UserResponse } from "@/types/user";
+import moment from "moment";
 
 const ProfileCard = () => {
   const { user } = useUser();
-
-  // from the backend
-  const role = "Customer";
-  const gender = "Male";
-  const dateJoined = "4th Dec, 2025";
-  
-  const balance = 765;
-  const transactions = 34;
+  const { data: userTransactions } = useGetTransactions();
+  const { data: wallets } = useGetWalletByType("naira") as {
+    data: WalletResponse[];
+  };
+  const { data: userData } = useGetUserByEmail(
+    user?.emailAddresses[0]?.emailAddress || ""
+  ) as {
+    data: UserResponse;
+  };
 
   // Safe gender icon function
   const getGenderIcon = (gender?: string) => {
@@ -75,10 +84,10 @@ const ProfileCard = () => {
               {user?.lastName}
             </h2>
             <p className="text-[#333385] text-sm font-bold">
-              @{user?.username ? user?.username : "<username>"}
+              @{user?.firstName?.toLowerCase()}
             </p>
             <span className="bg-[#EFEFF5] text-[#333385] px-3 py-1 rounded-full text-xs font-semibold mt-3 inline-flex items-center gap-1">
-              <FaShoppingCart /> {role}
+              <FaShoppingCart /> {userData?.role || "Customer"}
             </span>
           </div>
 
@@ -86,9 +95,9 @@ const ProfileCard = () => {
           <div className="mt-4 border-t border-b border-[#333385] py-4 space-y-2 text-[#545498] text-sm">
             <div className="flex items-center gap-1">
               <div className="inline-flex items-center gap-1 font-bold">
-                {getGenderIcon(gender)} Gender:
+                {getGenderIcon(userData?.gender || "")} Gender:
               </div>{" "}
-              {gender}
+              {userData?.gender || "Not Provided"}
             </div>
             <div className="flex items-center gap-3">
               <div className="inline-flex items-center gap-1 font-bold">
@@ -108,19 +117,21 @@ const ProfileCard = () => {
               <div className="inline-flex items-center gap-1 font-bold">
                 <FiCalendar size={15} /> Date joined:
               </div>{" "}
-              {dateJoined}
+              {moment(user?.createdAt).format("MMMM Do YYYY")}
             </div>
           </div>
 
           {/* Stats */}
           <div className="mt-6 grid grid-cols-2 gap-4">
             <div className="bg-[#F5F5FA] p-4 rounded-lg text-center">
-              <p className="text-2xl font-bold text-[#00005D]">₦{balance}</p>
+              <p className="text-2xl font-bold text-[#00005D]">
+                ₦{wallets?.[0]?.balance?.toLocaleString() || 0}
+              </p>
               <p className="text-xs text-gray-500">Amount in Wallet</p>
             </div>
             <div className="bg-[#F5F5FA] p-4 rounded-lg text-center">
               <p className="text-2xl font-bold text-[#00005D]">
-                {transactions}
+                {userTransactions?.length || 0}
               </p>
               <p className="text-xs text-gray-500">Transactions</p>
             </div>

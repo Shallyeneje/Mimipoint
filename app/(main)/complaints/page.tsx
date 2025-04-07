@@ -2,42 +2,62 @@
 import { FaHome } from "react-icons/fa";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import PageHeader from "@/components/shared/pageheader";
+import { Button } from "@/components/ui/button";
+import { CgSpinner } from "react-icons/cg";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useCreateComplaint } from "@/api/data/complaints";
+import { getUserId } from "@/utils";
+import toast from "react-hot-toast";
 
 const ComplaintForm = () => {
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
   const [transactionId, setTransactionId] = useState<string>("");
   const [complaint, setComplaint] = useState<string>("");
-  const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const disabled = !transactionId || !complaint;
+  const router = useRouter();
+  const { mutateAsync: createComplaint } = useCreateComplaint();
+  const user_id = getUserId();
 
-  const router = useRouter(); // Next.js navigation
+  const clearInputs = () => {
+    setTransactionId("");
+    setComplaint("");
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission
-    if (!name || !email || !transactionId || !complaint) {
-      setError("All fields are required");
+    if (disabled) {
+      toast.error("Please fill in all fields before submitting.");
       return;
     }
-    setError(""); // Clear existing error messages
+
+    if (!user_id) {
+      toast.error("User ID is required.");
+      return;
+    }
+
     setLoading(true);
 
     try {
+      await createComplaint({
+        user_id,
+        transaction_id: transactionId,
+        complaint,
+      });
+      toast.success("Complaint submitted successfully.");
       router.push("/complaints/submitFeedback"); // Redirect to feedback page
     } catch (error: any) {
-      setError(
-        error.response?.data?.message ||
-          "Something went wrong. Please try again."
-      );
+      toast.error("Error submitting complaint. Please try again.");
     } finally {
       setLoading(false);
+      clearInputs(); // Clear inputs after submission
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#EFEFF5] p-5 mt-3">
+    <div className="min-h-screen bg-[#EFEFF5] p-8 mt-4">
       <PageHeader
         icon={<FaHome size={20} />}
         title="Dashboard"
@@ -45,75 +65,54 @@ const ComplaintForm = () => {
         description="submit your complaints and be rest assured that we will reach out to you immediately"
       />
 
-      <div className="flex justify-center items-center min-h-screen p-4 pt-2">
+      <div className="flex justify-center items-center p-4 pt-2 mt-5">
         <div className="w-full max-w-md bg-white p-8  rounded-[6px]">
           <h1 className="text-xl font-bold text-center text-[#00005D] mb-6">
             Complaints Form
           </h1>
-          {error && <p className="text-red-500 text-center">{error}</p>}
+
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
-              <label className="block text-sm font-medium text-[#00005D] ">
-                Name
-              </label>
-              <input
-                type="text"
-                placeholder="Enter your full name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="w-full text-sm p-2 border border-[#8A8AB9] rounded-[6px] focus:outline-none focus:ring-2 focus:ring-[#00005D]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#00005D]">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full p-2 border text-sm border-[#8A8AB9] rounded-md focus:outline-none focus:ring-2 focus:ring-[#00005D]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#00005D] ">
+              <Label className="" htmlFor="transactionId">
                 Transaction ID
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
+                id="transactionId"
                 placeholder="Enter your transaction ID"
                 value={transactionId}
                 onChange={(e) => setTransactionId(e.target.value)}
                 required
-                className="w-full p-2 border border-[#8A8AB9] text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-[#00005D]"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#00005D]">
+              <Label className="" htmlFor="complaint">
                 Complaint
-              </label>
-              <textarea
+              </Label>
+              <Textarea
                 placeholder="Enter your complaint"
                 value={complaint}
                 onChange={(e) => setComplaint(e.target.value)}
                 required
-                className="w-full p-2 border text-sm border-[#8A8AB9] rounded-md h-24 resize-none focus:outline-none focus:ring-2 focus:ring-[#00005D]"
-              ></textarea>
+                className="resize-none h-27"
+              />
             </div>
 
-            <button
+            <Button
               type="submit"
-              disabled={loading}
-              className="w-full bg-[#00005D] text-white py-3 rounded-md font-bold text-[16px] hover:bg-blue-800 transition"
+              disabled={disabled || loading}
+              className="w-full bg-[#00005D] text-white py-3 mt-3 rounded-md font-bold text-[16px]"
             >
-              {loading ? "Submitting..." : "Submit Complaint"}
-            </button>
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <CgSpinner className="animate-spin" />
+                  Submitting...
+                </span>
+              ) : (
+                "Submit Complaint"
+              )}
+            </Button>
           </form>
         </div>
       </div>

@@ -17,10 +17,16 @@ export const useGetUserById = (id: string) => {
 };
 
 export const useGetUserByEmail = (email: string) => {
-  return useQuery(["user", email], async () => {
-    const response = await Axiosinstance.get(`users/user_by_email/${email}`);
-    return response.data;
-  });
+  return useQuery(
+    ["user", email],
+    async () => {
+      const response = await Axiosinstance.get(`users/user_by_email/${email}`);
+      return response.data;
+    },
+    {
+      enabled: !!email,
+    }
+  );
 };
 
 // get user token by id
