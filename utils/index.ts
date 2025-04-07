@@ -46,7 +46,6 @@ export const removeToken = () => {
   Cookies.remove(COOKIE_NAME);
 };
 
-
 // get user from the database by email
 export const getUserByEmail = async (email: string) => {
   const response = await AxiosInstanceServer.get(
@@ -58,4 +57,15 @@ export const getUserByEmail = async (email: string) => {
 export const getTokenByEmail = async (email: string) => {
   const response = await Axiosinstance.get(`users/token/${email}`);
   return response.data;
+};
+
+export const generateRandomPassword = (length: number) => {
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+  let password = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    password += charset[randomIndex];
+  }
+  return password;
 };

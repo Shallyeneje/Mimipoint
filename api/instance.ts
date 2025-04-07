@@ -27,11 +27,11 @@ export const AxiosinstanceAuth = axios.create({
 
 AxiosinstanceAuth.interceptors.request.use(
   (config) => {
-    const token = Auth.getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    // config.headers.Authorization = `Bearer 96692086-ecfa-4dc9-aab2-73dc5b4858e1`;
+    // const token = Auth.getToken();
+    // if (token) {
+    //   config.headers.Authorization = `Bearer ${token}`;
+    // }
+    config.headers.Authorization = `Bearer 96692086-ecfa-4dc9-aab2-73dc5b4858e1`;
     return config;
   },
   (error) => {
