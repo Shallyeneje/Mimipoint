@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
 import { OAuthStrategy } from "@clerk/types";
 import PasswordInput from "@/components/pages/auth/password-input";
+import { useCreateUser } from "@/api/data/users";
+import { saveToken } from "@/utils";
 
 export default function Register() {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -23,6 +25,7 @@ export default function Register() {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState("");
   const router = useRouter();
+  const { mutateAsync: createUser } = useCreateUser();
 
   if (!isLoaded) {
     return null;
@@ -60,7 +63,7 @@ export default function Register() {
     }
   };
 
-  // verification
+  // verification code flow
   const onPressVerify = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -90,13 +93,29 @@ export default function Register() {
       }
 
       await setActive({ session: completeSignUp.createdSessionId });
+      // Create user in your database
+      const new_user = await createUser({
+        email: emailAddress,
+        first_name: firstname,
+        last_name: lastname,
+        password,
+        oauth_provider: "email",
+        email_is_verified: true,
+        is_staff: false,
+        role: "customer",
+      });
+      saveToken({
+        token: new_user.token,
+        user_id: new_user.user_id,
+        user_email: new_user.user_email,
+      });
       toast.success("Email verified successfully!");
       router.push("/");
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
       toast.error(err.errors?.[0]?.message || "Verification failed.");
     } finally {
-      setLoading(false); // ✅ Stops endless loading
+      setLoading(false);
     }
   };
 

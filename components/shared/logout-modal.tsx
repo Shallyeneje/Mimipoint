@@ -8,8 +8,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useRouter } from "next/navigation";
 import { useClerk } from '@clerk/nextjs'
+import { removeToken } from "@/utils";
 
 type LogoutModalProps = {
   open: boolean;
@@ -21,6 +21,7 @@ const LogoutModal = ({ open, handleToggle }: LogoutModalProps) => {
 
   const Logout = async () => {
     try {
+      removeToken();
       await signOut({ redirectUrl: '/' });
     } catch (error) {
       console.error("Logout failed:", error);

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { CgSpinner } from "react-icons/cg";
-import { Transaction } from "@/types/transaction";
+import { TransactionResponse } from "@/types/transaction";
 import { useGetTransactions } from "@/api/data/transactions";
 import { usePathname } from "next/navigation";
 
@@ -19,7 +19,7 @@ import { usePathname } from "next/navigation";
 
 export default function Transactions() {
   const { data: transactions, isLoading: loading } = useGetTransactions() as {
-    data: Transaction[];
+    data: TransactionResponse[];
     isLoading: boolean;
   };
   const pathname = usePathname();

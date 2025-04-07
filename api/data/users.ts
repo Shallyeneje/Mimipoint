@@ -24,11 +24,9 @@ export const useGetUserByEmail = (email: string) => {
 };
 
 // get user token by id
-export const useGetUserTokenByEmail = (email: string) => {
-  return useQuery(["user", email], async () => {
-    const response = await Axiosinstance.get(`users/token/${email}`);
-    return response.data;
-  });
+export const getUserTokenByEmail = async (email: string) => {
+  const response = await Axiosinstance.get(`users/token/${email}`);
+  return response.data;
 };
 
 // get user activities by id
@@ -55,7 +53,6 @@ export const useCreateUser = () => {
   );
 };
 
-
 // delete user
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
@@ -70,7 +67,7 @@ export const useDeleteUser = () => {
       },
     }
   );
-}
+};
 
 // update user
 interface UpdateUserPayload {

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { use, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CgSpinner } from "react-icons/cg";
+import { saveToken } from "@/utils";
+import { getUserTokenByEmail } from "@/api/data/users";
 
 export default function LoginPage() {
   const { isLoaded, signIn, setActive } = useSignIn();
@@ -37,6 +39,11 @@ export default function LoginPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
+        const userToken = await getUserTokenByEmail(emailAddress);
+        if (userToken) {
+          const { token, user_id, user_email } = userToken;
+          saveToken({ token, user_id, user_email });
+        }
         toast.success("Login Successful!");
         router.push("/");
       } else {
@@ -129,10 +136,10 @@ export default function LoginPage() {
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <CgSpinner className="animate-spin" />
-                    Sending code...
+                    Signing in...
                   </span>
                 ) : (
-                  "Send password reset code"
+                  "Sign In"
                 )}
               </Button>
             </form>
