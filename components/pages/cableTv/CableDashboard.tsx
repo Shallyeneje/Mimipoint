@@ -11,6 +11,7 @@ import { FaHome } from "react-icons/fa";
 import { CableTvProviders } from "@/api/static-data";
 import { CgSpinner } from "react-icons/cg";
 import { Button } from "@/components/ui/button";
+import Transactions from "@/components/shared/transactions";
 
 const data = [
   {
@@ -45,7 +46,7 @@ export default function CableDashboard() {
   const [isPaying, setIsPaying] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const wallet = 9973.00
+  const wallet = 9973.0;
 
   const [selectedBundle, setSelectedBundle] = useState<{
     key: string;
@@ -177,7 +178,7 @@ export default function CableDashboard() {
             <Button
               onClick={handlePayment}
               className={`w-full bg-[#00005D] text-white py-2 rounded-md hover:bg-blue-900 transition`}
-              disabled={isPaying || smartcard === "" }
+              disabled={isPaying || smartcard === ""}
             >
               {isPaying ? (
                 <span className="flex items-center justify-center gap-2">
@@ -214,6 +215,10 @@ export default function CableDashboard() {
           </div>
         </DialogModal>
       </main>
+
+      <div className="mt-8">
+        <Transactions />
+      </div>
     </div>
   );
 }

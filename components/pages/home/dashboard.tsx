@@ -20,6 +20,9 @@ import Transactions from "@/components/shared/transactions";
 import { useGetComplaints } from "@/api/data/complaints";
 import { useGetTransactions, useGetWallets } from "@/api/data/transactions";
 import { WalletResponse } from "@/types/transaction";
+import { useGetUserProducts } from "@/api/data/easybuy";
+import { ProductResponse } from "@/types/easybuy";
+import { CgSpinner } from "react-icons/cg";
 
 const services = [
   {
@@ -28,6 +31,7 @@ const services = [
     color: "#2E94C5",
     bg: "#E6F7FF",
     link: "/buyAirtime",
+    desc: "Get instant airtime for all networks",
   },
   {
     name: "Buy Data",
@@ -35,6 +39,7 @@ const services = [
     color: "#009900",
     bg: "#E6FFE6",
     link: "/buyData",
+    desc: "Get instant data for all networks",
   },
   {
     name: "Cable TV",
@@ -42,6 +47,7 @@ const services = [
     color: "#E88B2E",
     bg: "#FFF5E6",
     link: "/cableTv",
+    desc: "Get instant cable TV subscription",
   },
   {
     name: "EasyBuy",
@@ -49,6 +55,7 @@ const services = [
     color: "#2E94C5",
     bg: "#E6F7FF",
     link: "/easybuy",
+    desc: "Easily showcase your products and services",
   },
   {
     name: "Exchange",
@@ -56,6 +63,7 @@ const services = [
     color: "#009900",
     bg: "#E6FFE6",
     link: "/exchange",
+    desc: "convert your currency easily, quickly and securely",
   },
   {
     name: "Electricity bill",
@@ -63,6 +71,7 @@ const services = [
     color: "#E88B2E",
     bg: "#FFF5E6",
     link: "/electricity",
+    desc: "Get instant electricity bill payment",
   },
 ];
 
@@ -73,7 +82,11 @@ export default function Dashboard() {
   const { data: userWallets } = useGetWallets() as {
     data: WalletResponse[];
   };
-
+  const { data: easyBuyProducts, isLoading: loadingUserProducts } =
+    useGetUserProducts() as {
+      data: ProductResponse[];
+      isLoading: boolean;
+    };
 
   return (
     <div className="min-h-screen bg-[#EFEFF5] p-8 mt-4">
@@ -108,7 +121,7 @@ export default function Dashboard() {
             {userWallets?.length > 0 ? (
               userWallets?.map((wallet) => (
                 <Card
-                  className="px-3 py-2.5 h-[140px] border-0"
+                  className="px-3 py-2.5 pt-5 h-[140px] border-0"
                   key={wallet.id}
                 >
                   <CardHeader className="gap-0">
@@ -124,7 +137,7 @@ export default function Dashboard() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="gap-0">
-                    <h6 className="text-[40px] font-bold text-[#00005D]">
+                    <h6 className="text-[35px] font-bold text-[#00005D]">
                       {wallet?.balance}
                     </h6>
                     <p className="text-sm text-[#8A8AB9]">Amount in Wallet</p>
@@ -132,7 +145,7 @@ export default function Dashboard() {
                 </Card>
               ))
             ) : (
-              <Card className="px-3 py-2.5 h-[140px] border-0">
+              <Card className="px-3 py-2.5 pt-5 h-[140px] border-0">
                 <CardHeader className="gap-0">
                   <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
                     <span>Current Balance</span>
@@ -140,14 +153,14 @@ export default function Dashboard() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="gap-0">
-                  <h6 className="text-[40px] font-bold text-[#00005D]">0</h6>
+                  <h6 className="text-[35px] font-bold text-[#00005D]">0</h6>
                   <p className="text-sm text-[#8A8AB9]">Amount in Wallet</p>
                 </CardContent>
               </Card>
             )}
 
             {/* Transactions */}
-            <Card className="px-3 py-2.5 h-[140px]">
+            <Card className="px-3 py-2.5 pt-5 h-[140px]">
               <CardHeader className="gap-0">
                 <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
                   <span>Transactions</span>
@@ -155,7 +168,7 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <h6 className="text-[40px] font-bold text-[#00005D]">
+                <h6 className="text-[35px] font-bold text-[#00005D]">
                   {userTransactions?.length || 0}
                 </h6>
                 <p className="text-sm text-[#8A8AB9]">Completed transactions</p>
@@ -163,7 +176,7 @@ export default function Dashboard() {
             </Card>
 
             {/* Complaints */}
-            <Card className="px-3 py-2.5 h-[140px]">
+            <Card className="px-3 py-2.5 pt-5 h-[140px]">
               <CardHeader className="gap-0">
                 <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
                   <span>Complaints</span>
@@ -171,7 +184,7 @@ export default function Dashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <h6 className="text-[40px] font-bold text-[#00005D]">
+                <h6 className="text-[35px] font-bold text-[#00005D]">
                   {userComplaints?.length || 0}
                 </h6>
                 <p className="text-sm text-[#8A8AB9]">Registered Complaints</p>
@@ -181,29 +194,76 @@ export default function Dashboard() {
 
           {/* Service Buttons */}
           <div className="grid grid-cols-3 gap-4 mt-6">
-            {services.map(({ name, icon: Icon, color, bg, link }) => (
+            {services.map(({ name, icon: Icon, color, bg, link, desc }) => (
               <Link key={name} href={link}>
-                <Card className="p-2 h-[100px] flex items-center justify-center cursor-pointer border-0">
-                  <div className="flex items-center">
+                <Card className="p-2 h-[100px] flex px-4 justify-center cursor-pointer border-0 ">
+                  <div className="flex items-center gap-2">
                     {/* Icon */}
                     <div
-                      className="flex justify-center items-center w-10 h-10 rounded-full"
+                      className="flex justify-center items-center w-10 h-10 rounded-full shrink-0"
                       style={{ backgroundColor: bg }}
                     >
                       <Icon size={24} style={{ color }} />
                     </div>
 
                     {/* Text */}
-                    <CardContent className="flex flex-col justify-center">
+                    <div className="flex flex-col justify-center">
                       <h3 className="font-bold text-xl">{name}</h3>
-                      <p className="text-[10px] text-[#8A8AB9] mt-1">
-                        Get instant airtime for all networks
-                      </p>
-                    </CardContent>
+                      <p className="text-[10px] text-[#8A8AB9] mt-1">{desc}</p>
+                    </div>
                   </div>
                 </Card>
               </Link>
             ))}
+          </div>
+
+          {/* Products Section */}
+          {/* <div className="mt-8">
+            <div className="flex  gap-3 text-[#00005D] mb-2.5 ">
+              <span className="">
+              </span>
+              <h6 className="text-2xl font-bold text-[#00005D] flex items-center gap-2 ">
+                Products
+              </h6>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {easyBuyProducts?.length > 0 ? (
+                easyBuyProducts?.map((product) => (
+                  <Card
+                    key={product.id}
+                    className="p-4 bg-white shadow-md rounded-lg"
+                  >
+                    <CardHeader className="gap-0">
+                      <CardTitle className="text-[18px] font-medium text-[#00005D] flex justify-between w-full">
+                        {product.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="gap-0">
+                      <p className="text-sm text-[#8A8AB9]">{product.price}</p>
+                      <p className="text-sm text-[#8A8AB9] mt-2">
+                        {product.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : loadingUserProducts ? (
+                <div className="flex gap-2 items-center justify-center">
+                  <CgSpinner className="animate-spin" size={20} />
+                  <p className="text-center text-gray-500">
+                    Loading products...
+                  </p>
+                </div>
+              ) : (
+                <div className="flex gap-2 items-center justify-center">
+                  <p className="text-center text-gray-500">No products found</p>
+                </div>
+              )}
+            </div>
+          </div> */}
+
+          {/* Transaction table */}
+          <div className="mt-8">
+            <Transactions />
           </div>
         </div>
 
@@ -211,11 +271,6 @@ export default function Dashboard() {
         <div className="col-span-3">
           <RecentActions />
         </div>
-      </div>
-
-      {/* Transaction */}
-      <div className="mt-8">
-        <Transactions />
       </div>
     </div>
   );

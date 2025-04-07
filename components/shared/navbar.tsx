@@ -72,7 +72,7 @@ const Navbar = ({ activeRoute, toggleSidebar }: NavbarProps) => {
                 {user?.firstName?.charAt(0)}
               </div>
             )}
-            <div className="hidden sm:block">
+            <div className="hidden">
               <p className="text-sm font-bold ">
                 {user?.firstName ? user?.firstName : "Not available"}{" "}
                 {user?.lastName}

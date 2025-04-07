@@ -26,13 +26,10 @@ export const useGetProductById = (id: string) => {
 };
 
 export const useGetUserProducts = () => {
-  return (
-    useQuery(["userProducts"]),
-    async () => {
-      const response = await AxiosinstanceAuth.get(`easybuy/products/user`);
-      return response.data;
-    }
-  );
+  return useQuery(["userProducts"], async () => {
+    const response = await AxiosinstanceAuth.get(`easybuy/products/user`);
+    return response.data;
+  });
 };
 
 export const useCreateProduct = () => {

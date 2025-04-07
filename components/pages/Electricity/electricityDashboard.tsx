@@ -7,6 +7,7 @@ import ElectricityPurchaseForm from "./electricityPurchaseForm";
 import { FaHome } from "react-icons/fa";
 import { ElectricityProvider, electricityProviders } from "@/api/static-data";
 import PageHeader from "@/components/shared/pageheader";
+import Transactions from "@/components/shared/transactions";
 
 export default function ElectricityDashboard() {
   const paymentOptions = [
@@ -20,7 +21,7 @@ export default function ElectricityDashboard() {
   const [selectedProvider, setSelectedProvider] =
     useState<ElectricityProvider | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
     <div className="min-h-screen bg-[#EFEFF5] p-8 mt-3">
       <PageHeader
@@ -28,7 +29,7 @@ export default function ElectricityDashboard() {
         title="Dashboard"
         subtitle="Electricity Bills"
         description="Pay your Electricity bills to your current provider, with ease"
-       />
+      />
 
       <div className="grid grid-cols-2 gap-2 mt-6 w-[260px]">
         {paymentOptions.map(({ name, href }) => (
@@ -102,6 +103,10 @@ export default function ElectricityDashboard() {
         <aside className="w-64 ">
           <ElectricityPurchaseForm provider={selectedProvider} />
         </aside>
+      </div>
+
+      <div className="mt-8">
+        <Transactions />
       </div>
     </div>
   );

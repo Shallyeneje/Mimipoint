@@ -45,7 +45,7 @@ const RecentActions = () => {
       <h2 className="text-xl font-bold text-[#00005D]">Recent actions</h2>
       {userActivities?.length > 0 ? (
         <div className="relative border-l-4 border-gray-300 mt-4 pl-4 space-y-4">
-          {userActivities?.map((activity) => (
+          {userActivities?.slice(0, 10).map((activity) => (
             <div key={activity.id} className="relative flex gap-3 items-start">
               {/* Timeline Icons */}
               <div className="absolute -left-7 grid place-items-center w-6 h-6 rounded-full bg-white border">
@@ -65,7 +65,7 @@ const RecentActions = () => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center gap-2 h-[210px] w-full bg-white my-4 rounded-lg shadow-md p-4 text-sm">
+        <div className="flex flex-col items-center justify-center gap-2 h-[250px] w-full bg-white my-4 rounded-lg shadow-md p-4 text-sm">
           <div className="flex justify-center items-center w-11 h-11 rounded-full bg-[#F0F0F5] mb-2">
             <MdPendingActions size={24} className="mb-2" />
           </div>

@@ -73,13 +73,13 @@ const FundWallet = () => {
 
     try {
       // create a transaction on the server
-      const transactionData = (await createTransaction({
-        amount: Number(form.amount), // Convert to kobo
+      const transactionData = await createTransaction({
+        amount: Number(form.amount),
         status: "pending",
         user_id: user_id,
         wallet_id: wallets[0]?.id,
         transaction_type: "topup",
-      })) as TransactionResponse;
+      }) as TransactionResponse;
 
       setComponentProps({
         email: form.email,

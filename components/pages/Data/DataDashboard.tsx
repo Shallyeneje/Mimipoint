@@ -6,6 +6,7 @@ import { dataPlans, NetworkDataPlans } from "@/api/static-data";
 import Image from "next/image";
 import PageHeader from "@/components/shared/pageheader";
 import { FaHome } from "react-icons/fa";
+import Transactions from "@/components/shared/transactions";
 
 const data = [
   {
@@ -121,6 +122,10 @@ export default function DataDashboard() {
         Top <span className="uppercase">{selected}</span> Data Offers
       </h3>
       <DataCards datatoshow={filteredData} />
+
+      <div className="mt-8">
+        <Transactions />
+      </div>
     </div>
   );
 }

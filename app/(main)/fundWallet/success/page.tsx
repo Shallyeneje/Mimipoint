@@ -6,7 +6,7 @@ import { TransactionResponse } from "@/types/transaction";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaCheckCircle, FaHome } from "react-icons/fa";
 import { RiLoader2Fill } from "react-icons/ri";
 
@@ -14,7 +14,6 @@ const Feedback = () => {
   const { user } = useUser();
   const searchParams = useSearchParams();
   const ref = useMemo(() => searchParams.get("reference"), [searchParams]);
-  const router = useRouter();
   const { mutateAsync: verifyTransaction } = useVerifyTransaction();
   const [transaction, setTransaction] = useState<TransactionResponse | null>(
     null
@@ -24,27 +23,14 @@ const Feedback = () => {
   const [success, setSuccess] = useState(false);
 
   // verify transaction
+  const hasVerified = useRef(false);
 
   useEffect(() => {
-    const verify = async () => {
-      if (ref) {
-        try {
-        } catch (error) {
-          console.error("Verification failed:", error);
-        }
-      }
-    };
-    verify();
-  }, [ref, verifyTransaction, router]);
+    if (!ref || hasVerified.current) return;
 
-  useEffect(() => {
-    if (!ref) {
-      setError(true);
-      setLoading(false);
-      return;
-    }
     const confirmPayment = async () => {
       try {
+        hasVerified.current = true;
         setLoading(true);
         const transactionData = await verifyTransaction(ref);
         setTransaction(transactionData);
@@ -58,7 +44,7 @@ const Feedback = () => {
     };
 
     confirmPayment();
-  }, [searchParams]);
+  }, [ref]);
 
   return (
     <div className="min-h-screen bg-[#EFEFF5] p-8 mt-4">

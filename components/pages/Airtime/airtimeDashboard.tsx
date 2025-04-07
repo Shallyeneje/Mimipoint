@@ -10,6 +10,7 @@ import { FaHome } from "react-icons/fa";
 import { BiWalletAlt } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
+import Transactions from "@/components/shared/transactions";
 
 const data = [
   {
@@ -303,6 +304,9 @@ export default function AirtimeDashboard() {
             setSelectedProduct={setSelected}
           />
         </aside>
+      </div>
+      <div className="mt-8">
+        <Transactions />
       </div>
     </div>
   );
