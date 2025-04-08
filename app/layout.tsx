@@ -6,7 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 export const metadata: Metadata = {
   title: "Mimipoint",
   description:
-    " Mimipoint is more than a vtu application , where you can advertise your product and exchange Currencies",
+    "Mimipoint is more than a vtu application , where you can advertise your product and exchange Currencies",
 };
 
 export default function RootLayout({
